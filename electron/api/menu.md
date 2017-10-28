@@ -1,8 +1,8 @@
-# 类：菜单
+# 类：Menu （菜单）
 
-> 创建原生的应用菜单和 context 菜单。
+> 创建原生的应用菜单和上下文菜单。
 
-进程： [Main](../glossary.md#main-process)
+进程： [Main（主进程）](../glossary.md#main-process)
 
 ### `new Menu()`
 
@@ -10,30 +10,31 @@
 
 ### 静态方法
 
-`菜单` 类有如下静态方法：
+`Menu` 类有如下静态方法：
 
 #### `Menu.setApplicationMenu(menu)`
 
 * `menu` Menu
 
-在 macOS 上设置应用菜单 `menu`。
-在 windows 和 linux，是为每个窗口都在其顶部设置菜单 `menu`。
+在 macOS 上设置 `menu` 为应用菜单。在 windows 和 linux中， `menu`设置的是为每个窗口的顶部菜单。
 
-设置为 `null` 时，将在 Windows 和 Linux 上删除菜单条，但在 macOS 系统中无效。
+设置为 `null` 时，在 Windows 和 Linux 上，将会删除菜单条，但在 macOS 系统中无效。
 
 **注意：** 这个API必须在 `app` 模块的 `ready` 事件后调用。
 
 #### `Menu.getApplicationMenu()`
 
-返回 `Menu` - 应用程序菜单，设置、 `null` 、或未设置。
+返回 `Menu` - 如果设置了菜单的话，就会返回应用程序菜单，如果没有设置，就会返回 `null` 。
+
+**注意：** 返回的`Menu`实例，并不支持动态的增删菜单项目。但是[实例属性](#instance-properties)可以被动态修改。
 
 #### `Menu.sendActionToFirstResponder(action)` _macOS_
 
 * `action` String
 
-发送 `action` 给应用的第一个响应器.这个用来模仿 Cocoa 菜单的默认行为，通常你只需要使用 [`MenuItem`](menu-item.md) 的属性 [`role`](menu-item.md#roles).
+发送 `action` 给应用的第一个响应者，这个用来模仿macOS菜单的默认行为。通常你只需要使用 [`MenuItem`](menu-item.md) 的[`role`](menu-item.md#roles)属性。
 
-查看更多 macOS 的原生 action [macOS Cocoa Event Handling Guide](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/EventOverview/EventArchitecture/EventArchitecture.html#//apple_ref/doc/uid/10000060i-CH3-SW7) .
+点击查看更多 macOS 的原生 action信息： [macOS Cocoa 事件处理向导](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/EventOverview/EventArchitecture/EventArchitecture.html#//apple_ref/doc/uid/10000060i-CH3-SW7) .
 
 #### `Menu.buildFromTemplate(template)`
 
@@ -41,9 +42,9 @@
 
 返回 `Menu`
 
-一般来说，`template` 只是用来创建 [MenuItem](menu-item.md) 的数组 `参数`。
+一般来说，`template` 只是用于创建 [MenuItem](menu-item.md) 的`options`数组，使用方式如上所示。
 
-你也可以向 `template` 元素添加其它东西，并且他们会变成已经有的菜单项的属性。
+你也可以向 `template` 元素添加其它字段，他们会变成已有菜单项的属性。
 
 ### 实例方法
 
@@ -53,11 +54,11 @@
 
 * `browserWindow` BrowserWindow (可选) - 默认为当前激活的窗口.
 * `options` Object (可选)
-	* `x` Number (可选) - 默认为当前光标所在的位置.
-	* `y` Number (**必须** 如果x设置了) - 默认为当前光标所在的位置.
-	* `async` Boolean (可选) - 设置为 `true` 时，调用这个方法会立即返回。设置为 `false` 时，当菜单被选择或者被关闭时才会返回。默认为 `false`。
-	* `positioningItem` Number (可选) _macOS_ - 指定坐标鼠标位置下面的菜单项的索引. 默认为
-  -1.
+  * `x` Number (可选) - 默认为当前光标所在的位置.
+  * `y` Number (**必须** 如果x设置了) - 默认为当前光标所在的位置.
+  * `async` Boolean (可选) - 设置为 `true` 时，调用这个方法会立即返回。设置为 `false` 时，当菜单被选择或者被关闭时才会返回。默认为 `false`。
+  * `positioningItem` Number (可选) _macOS_ - 指定坐标鼠标位置下面的菜单项的索引. 默认为
+    -1.
 
 在 `browserWindow` 中弹出菜单.
 
