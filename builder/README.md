@@ -2,7 +2,7 @@
 electron-builder是一个完整的解决方案，对于macos、windows、linux下的electron app，它可以提供打包及构建的相关功能。同时，它还提供开箱即用的“自动更新”功能支持。
 
 * NPM 包管理:
-  * [Native application dependencies](https://electron.atom.io/docs/tutorial/using-native-node-modules/) compilation (including [Yarn](http://yarnpkg.com/) support).
+  * [原生应用依赖](https://electron.atom.io/docs/tutorial/using-native-node-modules/) 编译 (包括 [Yarn](http://yarnpkg.com/) 支持).
   * Development dependencies are never included. You don't need to ignore them explicitly.
 * [Code Signing](code-signing.md) on a CI server or development machine.
 * [Auto Update](auto-update.md) ready application packaging.
@@ -49,26 +49,32 @@ Platform specific `7zip-bin-*` packages are `optionalDependencies`, which may re
 
 1. Specify the standard fields in the application `package.json` — [name](/configuration/configuration.md#Metadata-name), `description`, `version` and [author](https://docs.npmjs.com/files/package.json#people-fields-author-contributors).
 
-2. Specify the [build](/configuration/configuration.md#configuration) configuration in the `package.json` as follows:
-    ```json
+2. 在下面的`package.json`文件中，如下指明 [构建](/configuration/configuration.md#configuration) 配置：
+```json
+"build": {
+      "appId": "your.id",
+      "mac": {
+        "category": "your.app.category.type"
+      }
+    }
     "build": {
       "appId": "your.id",
       "mac": {
         "category": "your.app.category.type"
       }
     }
-    ```
-       See [all options](/configuration/configuration.md#configuration).
+```
+参见 [所有选项](/configuration/configuration.md#configuration)。
 
-3. Add [icons](/icons.md).
+3. 添加 [图标](/icons.md).
 
-4. Add the [scripts](https://docs.npmjs.com/cli/run-script) key to the development `package.json`:
-    ```json
+4. 添加 [scripts](https://docs.npmjs.com/cli/run-script) 内容到开发版的`package.json`中:
+ ```json
     "scripts": {
       "pack": "electron-builder --dir",
       "dist": "electron-builder"
     }
-    ```
+```
     Then you can run `yarn dist` (to package in a distributable format (e.g. dmg, windows installer, deb package)) or `yarn pack` (only generates the package directory without really packaging it. This is useful for testing purposes).
 
     To ensure your native dependencies are always matched electron version, simply add script `"postinstall": "electron-builder install-app-deps"` to your `package.json`.
