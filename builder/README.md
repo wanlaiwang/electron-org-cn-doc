@@ -57,35 +57,31 @@ Platform specific `7zip-bin-*` packages are `optionalDependencies`, which may re
         "category": "your.app.category.type"
       }
     }
-    "build": {
-      "appId": "your.id",
-      "mac": {
-        "category": "your.app.category.type"
-      }
-    }
 ```
 参见 [所有选项](/configuration/configuration.md#configuration)。
 
 3. 添加 [图标](/icons.md).
 
 4. 添加 [scripts](https://docs.npmjs.com/cli/run-script) 内容到开发版的`package.json`中:
- ```json
+
+```json
     "scripts": {
       "pack": "electron-builder --dir",
       "dist": "electron-builder"
     }
 ```
-    Then you can run `yarn dist` (to package in a distributable format (e.g. dmg, windows installer, deb package)) or `yarn pack` (only generates the package directory without really packaging it. This is useful for testing purposes).
 
-    To ensure your native dependencies are always matched electron version, simply add script `"postinstall": "electron-builder install-app-deps"` to your `package.json`.
+    然后你就可以运行命令 `yarn dist` (to package in a distributable format (e.g. dmg, windows installer, deb package)) 或者运行命令 `yarn pack` (only generates the package directory without really packaging it. This is useful for testing purposes).
+
+    为了确保你的原生依赖总是搭配electron的版本号，最简单的的办法就是添加如下命令： `"postinstall": "electron-builder install-app-deps"` 到你的 `package.json`文件之中.
 
 5. If you have native addons of your own that are part of the application (not as a dependency), set [nodeGypRebuild](/configuration/configuration#Configuration-nodeGypRebuild) to `true`.
 
-6. Install the [required system packages](/multi-platform-build.md) if you are not on macOS 10.12+.
+6. 如果你不是 macOS 10.12+ 系统的话，您需要安装 [必须的系统包](/multi-platform-build.md)。
 
-Please note that everything is packaged into an asar archive [by default](configuration/configuration.md#Configuration-asar).
+请注意， [默认情况](configuration/configuration.md#Configuration-asar)下，所有的文件都会被打包到asar压缩包中。
 
-For an app that will be shipped to production, you should sign your application. See [Where to buy code signing certificates](/code-signing.md#where-to-buy-code-signing-certificate).
+对于一个将要马上投入生产的app，你应该对你的应用进行签名。参见 [哪里可以购买签名证书](/code-signing.md#where-to-buy-code-signing-certificate).
 
 ## 编程使用
 请参见 `node_modules/electron-builder/out/index.d.ts`。为 TypeScript 提供了 Typings。
@@ -111,18 +107,17 @@ builder.build({
   })
 ```
 
-## Pack Only in a Distributable Format
+## 只在发布版本下打包
 
-You can use electron-builder only to pack your electron app in a AppImage, Snaps, Debian package, NSIS, macOS installer component package (`pkg`) 
-and other distributable formats.
+您可以用electron-builder只打包下面的某种格式。 AppImage, Snaps, Debian package, NSIS, macOS installer component package (`pkg`) 以及其他发行格式。.
 
 ```
 ./node_modules/.bin/build --prepackaged <packed dir>
 ```
 
-`--projectDir` (the path to project directory) option also can be useful.
+`--projectDir` (指向project目录) 选项也是很有用的。
 
 ## 社区
 
-[electron-builder](https://slackin.electron.build) on Slack (please use [threads](https://get.slack.help/hc/articles/115000769927-Message-threads)).
-Public [archive](http://electron-builder.slackarchive.io) without registration.
+Slack的[electron-builder](https://slackin.electron.build) 频道  (请使用 [threads](https://get.slack.help/hc/articles/115000769927-Message-threads)).
+无需注册，公共 [打包](http://electron-builder.slackarchive.io) .
