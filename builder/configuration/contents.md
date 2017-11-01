@@ -17,7 +17,7 @@ You may also specify custom source and destination directories by using `FileSet
   {
     "from": "path/to/source",
     "to": "path/to/destination",
-    "filter": ["!foo/*.js","**/*"]
+    "filter": ["!foo*.js"]
   }
 ]
 ```
