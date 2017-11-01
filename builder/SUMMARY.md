@@ -1,6 +1,6 @@
-* [Configuration](configuration/configuration.md)
-  * [Application Contents](/configuration/contents.md)
-  * [File Patterns](file-patterns.md)
+* [配置项](configuration/configuration.md)
+  * [应用内容](/configuration/contents.md)
+  * [文件模式](file-patterns.md)
   * [macOS](configuration/mac.md)
     * [DMG](configuration/dmg.md)
     * [MAS](configuration/mas.md)
@@ -11,23 +11,24 @@
     * [Squirrel.Windows](configuration/squirrel-windows.md)
   * [Linux](configuration/linux.md)
     * [Snap](configuration/snap.md)
-  * [Target](configuration/target.md)
-  * [Publish](configuration/publish.md)
-  
-* [Command Line Interface (CLI)](cli.md)
-  
-* Guides
-  * [Icons](icons.md)
-  * [Auto Update](auto-update.md)
-  * [Code Signing](code-signing.md)
-  * [Multi Platform Build](multi-platform-build.md)
-  
-* Tutorials
-  * [Loading App Dependencies Manually](tutorials/loading-app-dependencies-manually.md)
-  * [Two package.json Structure](tutorials/two-package-structure.md)
-  * [macOS Kernel Extensions](tutorials/macos-kernel-extensions.md)
-  
-* Programmatic API
+  * [目标](configuration/target.md)
+  * [发布](configuration/publish.md)
+
+* [命令行接口 (CLI)](cli.md)
+
+* 向导
+  * [图标](icons.md)
+  * [自动更新](auto-update.md)
+  * [代码前面](code-signing.md)
+  * [多平台构建](multi-platform-build.md)
+
+* 教程
+  * [手动加载app依赖](tutorials/loading-app-dependencies-manually.md)
+  * [两个package.json结构](tutorials/two-package-structure.md)
+  * [macOS核心扩展](tutorials/macos-kernel-extensions.md)
+
+* 可编程 API
   * [electron-builder](api/electron-builder.md)
-  
-* [Donate](donate.md)
+
+* [捐赠](donate.md)
+
