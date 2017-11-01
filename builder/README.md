@@ -64,6 +64,10 @@ Platform specific `7zip-bin-*` packages are `optionalDependencies`, which may re
 
 4. 添加 [scripts](https://docs.npmjs.com/cli/run-script) 内容到开发版的`package.json`中:
 
+    然后你就可以运行命令 `yarn dist` (to package in a distributable format (e.g. dmg, windows installer, deb package)) 或者运行命令 `yarn pack` (only generates the package directory without really packaging it. This is useful for testing purposes).
+
+    为了确保你的原生依赖总是搭配electron的版本号，最简单的的办法就是添加如下命令： `"postinstall": "electron-builder install-app-deps"` 到你的 `package.json`文件之中。
+
 ```json
     "scripts": {
       "pack": "electron-builder --dir",
@@ -71,11 +75,7 @@ Platform specific `7zip-bin-*` packages are `optionalDependencies`, which may re
     }
 ```
 
-    然后你就可以运行命令 `yarn dist` (to package in a distributable format (e.g. dmg, windows installer, deb package)) 或者运行命令 `yarn pack` (only generates the package directory without really packaging it. This is useful for testing purposes).
-
-    为了确保你的原生依赖总是搭配electron的版本号，最简单的的办法就是添加如下命令： `"postinstall": "electron-builder install-app-deps"` 到你的 `package.json`文件之中.
-
-5. If you have native addons of your own that are part of the application (not as a dependency), set [nodeGypRebuild](/configuration/configuration#Configuration-nodeGypRebuild) to `true`.
+5. 如果你的应用里面，包含有自己的原生addon (并不是依赖项)，那么请设置 [nodeGypRebuild](/configuration/configuration#Configuration-nodeGypRebuild)为`true`。
 
 6. 如果你不是 macOS 10.12+ 系统的话，您需要安装 [必须的系统包](/multi-platform-build.md)。
 
