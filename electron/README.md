@@ -8,7 +8,7 @@
 * [Application Packaging](tutorial/application-packaging.md)
 * [主进程调试](tutorial/debugging-main-process.md)
 * [Debugging the Main Process in node-inspector](tutorial/debugging-main-process-node-inspector.md)
-* [Debugging the Main Process in VSCode](tutorial/Debugging the Main Process in VSCode.md)
+* [在VSCode中调试主进程](tutorial/debugging-main-process-vscode.md)
 * [桌面环境集成](tutorial/desktop-environment-integration.md)
 * [使用开发人员工具扩展](tutorial/devtools-extension.md)
 * [Electron 版本管理](tutorial/electron-versioning.md)
