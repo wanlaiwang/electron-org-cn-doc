@@ -1,61 +1,62 @@
-请确认您所使用的文档匹配您的 Electron 版本。您可以在文档页面中找到版本号信息，如果不能找到，您也许在使用的是：开发分支版本的文档，这其中可能包括了一些与您的 Electron 版本不兼容的 API。
-如果想要访问老版本的文档，你可以通过 GitHub 的[切换分支功能](https://github.com/electron/electron/tree/v1.4.0)，在下拉菜单中选择与您的当前版本相匹配的分支。
-
-## 常见问题
-
-这里是一些被经常问到的问题，在提 issue 之前请先看一下这里。
-
-+ [Electron 常见问题](faq/electron-faq.md)
+感谢大家选择Electron中文网查看文档，有问题可以先查看 [Electron 常见问题](faq.md)。如果没有得到您的答案，您可以选择加入我们的QQ群，寻求帮助。或者也可以到我们的社区（ https://js3.org/ ）去发布问题。文档在不断完善中，感谢支持！
 
 ## 向导
 
-* [术语表](glossary.md)
-* [支持平台](tutorial/supported-platforms.md)
-* [安全性](tutorial/security.md)
-* [Electron 版本管理](tutorial/electron-versioning.md)
-* [分发应用](tutorial/application-distribution.md)
-* [提交应用到 Mac App Store](tutorial/mac-app-store-submission-guide.md)
-* [Windows 商店提交指引](tutorial/windows-store-guide.md)
-* [打包应用](tutorial/application-packaging.md)
-* [使用 Node 原生模块](tutorial/using-native-node-modules.md)
+* [关于Electron](tutorial/about.md)
+* [Accessibility](tutorial/accessibility.md)
+* [Application Distribution](tutorial/application-distribution.md)
+* [Application Packaging](tutorial/application-packaging.md)
 * [主进程调试](tutorial/debugging-main-process.md)
-* [使用 Selenium 和 WebDriver](tutorial/using-selenium-and-webdriver.md)
-* [使用开发人员工具扩展](tutorial/devtools-extension.md)
-* [使用 Pepper Flash 插件](tutorial/using-pepper-flash-plugin.md)
-* [使用 Widevine CDM 插件](tutorial/using-widevine-cdm-plugin.md)
-* [通过自动化持续集成系统（CI）进行测试 (Travis, Jenkins)](tutorial/testing-on-headless-ci.md)
-* [离屏渲染](tutorial/offscreen-rendering.md)
-* [快捷键](tutorial/keyboard-shortcuts.md)
-
-## 教程
-
-* [快速入门](tutorial/quick-start.md)
+* [Debugging the Main Process in node-inspector](tutorial/debugging-main-process-node-inspector.md)
+* [Debugging the Main Process in VSCode](tutorial/Debugging the Main Process in VSCode.md)
 * [桌面环境集成](tutorial/desktop-environment-integration.md)
+* [使用开发人员工具扩展](tutorial/devtools-extension.md)
+* [Electron 版本管理](tutorial/electron-versioning.md)
+* [Installation](tutorial/installation.md)
+* [键盘快捷键](tutorial/keyboard-shortcuts.md)
+* [提交应用到 Mac App Store](tutorial/mac-app-store-submission-guide.md)
+* [Multithreading](tutorial/multithreading.md)
+* [Notifications (Windows, Linux, macOS)](tutorial/notifications.md)
+* [离屏渲染](tutorial/offscreen-rendering.md)
 * [在线/离线事件探测](tutorial/online-offline-events.md)
+* [Planned Breaking API Changes](tutorial/planned-breaking-changes.md)
+* [快速入门](tutorial/quick-start.md)
 * [交互式解释器（REPL）](tutorial/repl.md)
+* [Security, Native Capabilities, and Your Responsibility](tutorial/security.md)
+* [支持平台](tutorial/supported-platforms.md)
+* [自动化持续集成系统（CI）测试 (Travis, Jenkins)](tutorial/testing-on-headless-ci.md)
+* [使用 Node 原生模块](tutorial/using-native-node-modules.md)
+* [使用 Pepper Flash 插件](tutorial/using-pepper-flash-plugin.md)
+* [使用 Selenium 和 WebDriver](tutorial/using-selenium-and-webdriver.md)
+* [使用 Widevine CDM 插件](tutorial/using-widevine-cdm-plugin.md)
+* [Windows 商店提交指引](tutorial/windows-store-guide.md)
+* [术语表](glossary.md)
+* [分发应用](tutorial/application-distribution.md)
+* [打包应用](tutorial/application-packaging.md)
 
 ## API文档
 
-* [简介](api/synopsis.md)
-* [进程对象](api/process.md)
-* [支持的 Chrome 命令行开关](api/chrome-command-line-switches.md)
-* [环境变量](api/environment-variables.md)
-
-### 自定义的 DOM 元素:
-
-* [`File` 对象](api/file-object.md)
-* [`<webview>` 标签](api/webview-tag.md)
-* [`window.open` 函数](api/window-open.md)
-
 ### 在主进程内可用的模块:
 
+* [Accelerator](api/accelerator.md)
 * [app](api/app.md)
 * [autoUpdater(自动更新)](api/auto-updater.md)
 * [BrowserWindow](api/browser-window.md)
+* [Certificate Object](api/structures/certificate.md)
+* [支持Chrome 命令行开关](api/chrome-command-line-switches.md)
+* [ClientRequest](api/client-request.md)
 * [contentTracing](api/content-tracing.md)
+* [Cookies](api/cookies.md)
+* [Debugger](api/debugger.md)
 * [dialog](api/dialog.md)
+* [DownloadItem](api/download-item.md)
+* [Frameless Window](api/frameless-window.md)
 * [globalShortcut](api/global-shortcut.md)
+* [IncomingMessage](api/incoming-message.md)
 * [ipcMain](api/ipc-main.md)
+* [JumpListCategory Object](api/structures/jump-list-category.md)
+* [JumpListItem Object](api/structures/jump-list-item.md)
+* [Locale](api/locales.md)
 * [Menu](api/menu.md)
 * [MenuItem](api/menu-item.md)
 * [net](api/net.md)
@@ -64,38 +65,63 @@
 * [protocol](api/protocol.md)
 * [session](api/session.md)
 * [systemPreferences](api/system-preferences.md)
+* [Task Object](api/structures/task.md)
+* [ThumbarButton Object](api/structures/thumbar-button.md)
+* [TouchBar](api/touch-bar.md)
+* [TouchBarButton](api/touch-bar-button.md)
+* [TouchBarColorPicker](api/touch-bar-color-picker.md)
+* [TouchBarGroup](api/touch-bar-group.md)
+* [TouchBarLabel](api/touch-bar-label.md)
+* [TouchBarPopover](api/touch-bar-popover.md)
+* [TouchBarScrubber](api/touch-bar-scrubber.md)
+* [TouchBarSegmentedControl](api/touch-bar-segmented-control.md)
+* [TouchBarSlider](api/touch-bar-slider.md)
+* [TouchBarSpacer](api/touch-bar-spacer.md)
 * [Tray](api/tray.md)
 * [webContents](api/web-contents.md)
+* [WebRequest](api/web-request.md)
 
 ### 在渲染进程（网页）内可用的模块:
 
+* [BrowserWindowProxy](api/browser-window-proxy.md)
 * [desktopCapturer](api/desktop-capturer.md)
+* [`File` 对象](api/file-object.md)
 * [ipcRenderer](api/ipc-renderer.md)
+* [MemoryUsageDetails Object](api/structures/memory-usage-details.md)
 * [remote](api/remote.md)
 * [webFrame](api/web-frame.md)
+* [`<webview>` 标签](api/webview-tag.md)
+* [`window.open` 函数](api/window-open.md)
 
 ### 在两种进程中都可用的模块:
 
 * [clipboard](api/clipboard.md)
 * [crashReporter](api/crash-reporter.md)
+* [Display Object](api/structures/display.md)
+* [环境变量](api/environment-variables.md)
 * [nativeImage](api/native-image.md)
+* [进程对象](api/process.md)
+* [Rectangle Object](api/structures/rectangle.md)
 * [screen](api/screen.md)
 * [shell](api/shell.md)
+* [ShortcutDetails Object](api/structures/shortcut-details.md)
+* [简介](api/synopsis.md)
 
-## 开发
 
-* [代码规范](development/coding-style.md)
-* [在 C++ 代码中使用 clang-format 工具](development/clang-format.md)
-* [源码目录结构](development/source-code-directory-structure.md)
+## 高级
+
 * [与 NW.js（原 node-webkit）在技术上的差异](development/atom-shell-vs-node-webkit.md)
-* [构建系统概览](development/build-system-overview.md)
+* [构建步骤（Linux）](development/build-instructions-linux.md)
 * [构建步骤（macOS）](development/build-instructions-osx.md)
 * [构建步骤（Windows）](development/build-instructions-windows.md)
-* [构建步骤（Linux）](development/build-instructions-linux.md)
-* [调试步骤 (macOS)](development/debugging-instructions-macos.md)
-* [调试步骤 (Windows)](development/debug-instructions-windows.md)
-* [在调试中使用 Symbol Server](development/setting-up-symbol-server.md)
-* [文档风格指南](styleguide.md)
-* [升级 Chrome](development/upgrading-chrome.md)
+* [构建系统概览](development/build-system-overview.md)
 * [Chromium 开发](development/chromium-development.md)
+* [在 C++ 代码中使用 clang-format 工具](development/clang-format.md)
+* [代码规范](development/coding-style.md)
+* [调试步骤 (Windows)](development/debug-instructions-windows.md)
+* [调试步骤 (macOS)](development/debugging-instructions-macos.md)
+* [Releasing](development/releasing.md)
+* [在调试中使用 Symbol Server](development/setting-up-symbol-server.md)
+* [源码目录结构](development/source-code-directory-structure.md)
+* [升级 Chrome](development/upgrading-chrome.md)
 * [V8 开发](development/v8-development.md)
