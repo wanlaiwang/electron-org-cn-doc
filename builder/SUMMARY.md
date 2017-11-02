@@ -19,7 +19,7 @@
 * 向导
   * [图标](icons.md)
   * [自动更新](auto-update.md)
-  * [代码签名](code-signing.md)
+  * [代码签名](code-signing.md)
   * [多平台构建](multi-platform-build.md)
 
 * 教程
