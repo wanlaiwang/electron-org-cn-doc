@@ -77,11 +77,7 @@ Platform specific `7zip-bin-*` packages are `optionalDependencies`, which may re
 
 5. 如果你的应用里面，包含有自己的原生addon (并不是依赖项)，那么请设置 [nodeGypRebuild](/configuration/configuration#Configuration-nodeGypRebuild)为`true`。
 
-6. 如果你不是 macOS 10.12+ 系统的话，您需要安装 [必须的系统包](/multi-platform-build.md)。
-
-请注意， [默认情况](configuration/configuration.md#Configuration-asar)下，所有的文件都会被打包到asar压缩包中。
-
-对于一个将要马上投入生产的app，你应该对你的应用进行签名。参见 [哪里可以购买签名证书](/code-signing.md#where-to-buy-code-signing-certificate).
+6. 如果你不是 macOS 10.12+ 系统的话，您需要安装 [必须的系统包](/multi-platform-build.md)。请注意， [默认情况](configuration/configuration.md#Configuration-asar)下，所有的文件都会被打包到asar压缩包中。对于一个将要马上投入生产的app，你应该对你的应用进行签名。参见 [哪里可以购买签名证书](/code-signing.md#where-to-buy-code-signing-certificate).
 
 ## 编程使用
 请参见 `node_modules/electron-builder/out/index.d.ts`。为 TypeScript 提供了 Typings。
