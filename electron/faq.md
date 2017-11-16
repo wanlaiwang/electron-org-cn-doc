@@ -34,6 +34,12 @@ electron-builder .
 
 一般情况下，通过packager或者builder打包完毕后，exe、dll、asr等文件总和的大小为100M左右。而通过builder制作的nsis安装包，一般为32M。通过innosetup生成的安装包，一般为31M左右。
 
+## electron是否支持xp系统
+
+不支持，xp系统目前已经是微软不再支持的系统，请尽快升级到安全稳定的windows版本。
+
+更多信息请点击这里：https://js3.org/question/43 。
+
 ## Electron 会在什么时候升级到最新版本的 Chrome？
 
 通常来说，在 Chrome 稳定版发布后一周或两周内，我们会更新 Electron 内置的 Chrome 版本。但是这个评估并不是可保证的，因为这取决于升级所需要的工作量。
