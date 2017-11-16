@@ -11,11 +11,9 @@ npm config set electron_mirror http://npm.taobao.org/mirrors/electron/
 
 ## 如何打包，打包的命令是什么
 
-大家可以看这里，https://electron.org.cn/build.html 。
+如果你仅仅想体验一下打包的乐趣的话，您可以cd到当前目录。然后：
 
-当然，如果你仅仅想体验一下打包的乐趣的话，您可以cd到当前目录。然后：
-
-全局安装electron-packager，执行最简单的打包命令。
+* 全局安装electron-packager，执行最简单的打包命令。
 
 ```batch
 npm install electron-packager -g
@@ -23,13 +21,14 @@ npm install electron-packager -g
 ```batch
 electron-packager .
 ```
-或者全局安装electron-builder，执行最简单的打包命令。（builder执行完得到的是安装包）
+* 或者全局安装electron-builder，执行最简单的打包命令。（builder执行完得到的是安装包）
 ```batch
 npm install electron-builder -g
 ```
 ```batch
 electron-builder .
 ```
+更多详细的参数及说明，请点击这里：https://electron.org.cn/build.html 。
 
 ## electron 打包完，有多大？
 
