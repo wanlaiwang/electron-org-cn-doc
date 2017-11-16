@@ -9,13 +9,28 @@ npm config set electron_mirror http://npm.taobao.org/mirrors/electron/
 ```
 另外，对于文件构建时的timeout问题，需要您下载对应的文件到本地缓存文件夹。具体的下载切换办法，可以点击这里查看：[https://js3.org/article/7](https://js3.org/article/7)
 
+## 打包的命令是什么
 
-## 在安装 electron 的时候，为什么我会遇到麻烦？
-在执行 `npm install electron` 命令的时候，一些用户偶尔会遇到安装错误。
+大家可以看这里，https://electron.org.cn/build.html 。
 
-在大多数情况下，这些错误都是网络连接问题所导致的，而不是 electron 的npm包本身的问题。一些类似 ELIFECYCLE、EAI_AGAIN、ECONNRESET 和 ETIMEDOUT 之类的，都是网络问题。最好的解决方案就是切换网络，或者稍稍等待一下，再重新尝试安装。
+当然，如果你仅仅想体验一下打包的乐趣的话，可以全局安装electron-packager或者electron-builder。然后执行最简单的打包命令即可。
 
-当通过npm 安装仍然失败的话，您还可以尝试直接下载 electron 的字节版本，位置是： [electron/electron/releases](https://github.com/electron/electron/releases) 。
+```batch
+npm install electron-packager -g
+```
+```batch
+electron-packager .
+```
+```batch
+npm install electron-builder -g
+```
+```batch
+electron-builder .
+```
+
+## electron 打包完，有多大？
+
+一般情况下，通过packager或者builder打包完毕后，exe、dll、asr等文件总和的大小为100M左右。而通过builder制作的nsis安装包，一般为32M。通过innosetup生成的安装包，一般为31M左右。
 
 ## Electron 会在什么时候升级到最新版本的 Chrome？
 
