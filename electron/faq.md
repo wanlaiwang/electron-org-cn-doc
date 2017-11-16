@@ -9,7 +9,7 @@ npm config set electron_mirror http://npm.taobao.org/mirrors/electron/
 ```
 另外，对于文件构建时的timeout问题，需要您下载对应的文件到本地缓存文件夹。具体的下载切换办法，可以点击这里查看：[https://js3.org/article/7](https://js3.org/article/7)
 
-## 打包的命令是什么
+## 如何打包，打包的命令是什么
 
 大家可以看这里，https://electron.org.cn/build.html 。
 
@@ -23,7 +23,7 @@ npm install electron-packager -g
 ```batch
 electron-packager .
 ```
-或者全局安装electron-builder，执行最简单的打包命令。
+或者全局安装electron-builder，执行最简单的打包命令。（builder执行完得到的是安装包）
 ```batch
 npm install electron-builder -g
 ```
