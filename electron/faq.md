@@ -32,7 +32,7 @@ electron-builder .
 
 ## electron 打包完，有多大？
 
-一般情况下，通过packager或者builder打包完毕后，exe、dll、asr等文件总和的大小为100M左右。而通过builder制作的nsis安装包，一般为32M。通过innosetup生成的安装包，一般为31M左右。
+一般情况下，通过packager或者builder打包完毕后，exe、dll、asr等文件总和的大小为100M左右。而通过builder制作的nsis安装包，一般为32M左右。通过innosetup生成的安装包，一般为31M左右。
 
 ## electron是否支持xp系统
 
