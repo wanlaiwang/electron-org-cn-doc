@@ -51,9 +51,7 @@ win.once('ready-to-show', () => {
 
 ### 设置 `backgroundColor`
 
-对于一个复杂的应用程序，`ready-to-show` 事件可能发出太晚，使
-应用程序感觉缓慢。在这种情况下，建议立即显示窗口，
-并使用接近应用程序的背景 `backgroundColor`：
+对于一个复杂的应用程序，`ready-to-show` 事件可能发出太晚，使应用程序感觉缓慢。在这种情况下，建议立即显示窗口，并使用接近应用程序的背景 `backgroundColor`：
 
 ```javascript
 const {BrowserWindow} = require('electron')
@@ -62,8 +60,7 @@ let win = new BrowserWindow({backgroundColor: '#2e2c29'})
 win.loadURL('https://github.com')
 ```
 
-请注意，即使是使用 `ready-to-show` 事件的应用程序，仍建议使用
-设置 `backgroundColor` 使应用程序感觉更原生。
+请注意，即使是使用 `ready-to-show` 事件的应用程序，仍建议使用设置 `backgroundColor` 使应用程序感觉更原生。
 
 ## Parent 和 child 窗口
 
@@ -82,8 +79,7 @@ top.show()
 
 ### Modal 窗口
 
-模态窗口是禁用父窗口的子窗口，以创建模态
-窗口，你必须设置 `parent` 和 `modal` 选项：
+模态窗口是禁用父窗口的子窗口，以创建模态窗口，你必须设置 `parent` 和 `modal` 选项：
 
 ```javascript
 const {BrowserWindow} = require('electron')
@@ -98,9 +94,7 @@ child.once('ready-to-show', () => {
 ### 平台通知
 
 * 在 macOS 上，modal 窗口将显示为附加到父窗口的工作表。
-* 在 macOS 上，子窗口将保持与父窗口的相对位置
-   当父窗口移动时，而在 Windows 和 Linux 子窗口不会
-   移动。
+* 在 macOS 上，子窗口将保持与父窗口的相对位置。当父窗口移动时，而在 Windows 和 Linux 子窗口不会移动。
 * 在Windows上，不支持动态更改父窗口。
 * 在Linux上，模态窗口的类型将更改为 `dialog`。
 * 在Linux上，许多桌面环境不支持隐藏模态窗口。
@@ -228,7 +222,7 @@ child.once('ready-to-show', () => {
 
 * `event` Event
 
-在窗口要关闭的时候触发. 它在DOM的 `beforeunload` and `unload` 事件之前触发.使用 `event.preventDefault()` 可以取消这个操作
+在窗口要关闭的时候触发. 它在DOM的 `beforeunload` and `unload` 事件之前触发.使用 `event.preventDefault()` 可以取消这个操作。
 
 通常你想通过 `beforeunload` 处理器来决定是否关闭窗口，但是它也会在窗口重载的时候被触发. 在 Electron 中，返回一个空的字符串或 `false` 可以取消关闭.例如:
 
@@ -312,8 +306,7 @@ window.onbeforeunload = function (e) {
 
 ### Event: 'app-command' _Windows_
 
-在请求一个[App Command](https://msdn.microsoft.com/en-us/library/windows/desktop/ms646275(v=vs.85).aspx)的时候触发.
-典型的是键盘媒体或浏览器命令, Windows上的 "Back" 按钮用作鼠标也会触发.
+在请求一个[App Command](https://msdn.microsoft.com/en-us/library/windows/desktop/ms646275(v=vs.85).aspx)的时候触发.典型的是键盘媒体或浏览器命令, Windows上的 "Back" 按钮用作鼠标也会触发.
 
 ```javascript
 someWindow.on('app-command', function (e, cmd) {
@@ -765,11 +758,7 @@ windows上句柄类型为 `HWND` ，macOS `NSView*` ， Linux `Window`.
 
 * `buttons` Array
 
-在窗口的任务栏button布局出为缩略图添加一个有特殊button的缩略图工具栏. 返回一个 `Boolean` 对象来指示是否成功添加这个缩略图工具栏.
-
-因为空间有限，缩略图工具栏上的 button 数量不应该超过7个.一旦设置了，由于平台限制，就不能移动它了.但是你可使用一个空数组来调用api来清除 buttons .
-
-所有 `buttons` 是一个 `Button` 对象数组:
+在窗口的任务栏button布局出为缩略图添加一个有特殊button的缩略图工具栏. 返回一个 `Boolean` 对象来指示是否成功添加这个缩略图工具栏.因为空间有限，缩略图工具栏上的 button 数量不应该超过7个.一旦设置了，由于平台限制，就不能移动它了.但是你可使用一个空数组来调用api来清除 buttons .所有 `buttons` 是一个 `Button` 对象数组:
 
 * `Button` Object
   * `icon` [NativeImage](native-image.md) - 在工具栏上显示的图标.
