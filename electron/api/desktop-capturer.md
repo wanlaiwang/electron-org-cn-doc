@@ -1,16 +1,20 @@
 # desktopCapturer
 
-`desktopCapturer` 模块可用来获取可用资源，这个资源可通过 `getUserMedia` 捕获得到.
+> 使用`navigator.mediaDevices.getUserMedia`API，可以获取媒体源信息的权限。可用于：从桌面上捕获音频和视频功能。
+
+进程：[渲染进程](../glossary.md#renderer-process)。
+
+下面的例子，将要展示“如何从一个标题为`electron`的桌面窗体里面，捕获视频”：
 
 ```javascript
-// 在渲染进程中.
-var desktopCapturer = require('electron').desktopCapturer
+// 在渲染进程中
+const {desktopCapturer} = require('electron')
 
-desktopCapturer.getSources({types: ['window', 'screen']}, function (error, sources) {
+desktopCapturer.getSources({types: ['window', 'screen']}, (error, sources) => {
   if (error) throw error
-  for (var i = 0; i < sources.length; ++i) {
+  for (let i = 0; i < sources.length; ++i) {
     if (sources[i].name === 'Electron') {
-      navigator.webkitGetUserMedia({
+      navigator.mediaDevices.getUserMedia({
         audio: false,
         video: {
           mandatory: {
@@ -22,25 +26,41 @@ desktopCapturer.getSources({types: ['window', 'screen']}, function (error, sourc
             maxHeight: 720
           }
         }
-      }, gotStream, getUserMediaError)
+      }, handleStream, handleError)
       return
     }
   }
 })
 
-function gotStream (stream) {
+function handleStream (stream) {
   document.querySelector('video').src = URL.createObjectURL(stream)
 }
 
-function getUserMediaError (e) {
-  console.log('getUserMediaError')
+function handleError (e) {
+  console.log(e)
 }
 ```
 
-当调用 `navigator.webkitGetUserMedia` 时创建一个约束对象，如果使用 `desktopCapturer` 的资源，必须设置 `chromeMediaSource` 为 `"desktop"` ，并且 `audio` 为 `false`.
+为了从一个由`desktopCapturer`提供的源里面捕获视频，传递给[`navigator.mediaDevices.getUserMedia`] 的约束信息必须包括`chromeMediaSource: 'desktop'`和`audio: false`。
 
-如果你想捕获整个桌面的 audio 和 video，你可以设置 `chromeMediaSource` 为 `"screen"` ，和 `audio` 为 `true`.
-当使用这个方法的时候，不可以指定一个 `chromeMediaSourceId`.
+为了从整个desktop捕获音频和视频，传递给[`navigator.mediaDevices.getUserMedia`] 的约束信息必须包含：`chromeMediaSource: 'desktop'`，对于音频和视频来说都是必须的。但是不能指定`chromeMediaSourceId`的约束条件。
+
+```
+const constraints = {
+  audio: {
+    mandatory: {
+      chromeMediaSource: 'desktop'
+    }
+  },
+  video: {
+    mandatory: {
+      chromeMediaSource: 'desktop'
+    }
+  }
+}
+```
+
+
 
 ## 方法
 
@@ -52,13 +72,9 @@ function getUserMediaError (e) {
   * `types` Array - 一个 String 数组，列出了可以捕获的桌面资源类型, 可用类型为 `screen` 和 `window`.
   * `thumbnailSize` Object (可选) - 建议缩略可被缩放的 size, 默认为 `{width: 150, height: 150}`.
 * `callback` Function
+  *  `error`错误
+  *  `sources` [DesktopCapturerSource](structures/desktop-capturer-source.md)
 
-发起一个请求，获取所有桌面资源，当请求完成的时候使用 `callback(error, sources)` 调用  `callback` .
+  发起一个获取所有桌面资源的请求，当请求完成的时候，请使用 `callback(error, sources)` 调用  `callback` .
 
-`sources` 是一个 `Source` 对象数组, 每个 `Source` 表示了一个捕获的屏幕或单独窗口，并且有如下属性 :
-* `id` String - 在 `navigator.webkitGetUserMedia` 中使用的捕获窗口或屏幕的 id . 格式为 `window:XX` 祸
-  `screen:XX`，`XX` 是一个随机数.
-* `name` String - 捕获窗口或屏幕的描述名 . 如果资源为屏幕，名字为 `Entire Screen` 或 `Screen <index>`; 如果资源为窗口, 名字为窗口的标题.
-* `thumbnail` [NativeImage](NativeImage.md) - 缩略图.
-
-**注意:** 不能保证 `source.thumbnail` 的 size 和 `options` 中的 `thumnbailSize` 一直一致. 它也取决于屏幕或窗口的缩放比例.
+`sources` 是一个[DesktopCapturerSource](structures/desktop-capturer-source.md)对象数组, 每个 `DesktopCapturerSource r` 表示了一个可以被捕获的屏幕或单独窗口。
