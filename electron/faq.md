@@ -30,9 +30,15 @@ electron-builder .
 ```
 更多详细的参数及说明，请点击这里：https://electron.org.cn/build.html 。
 
+## electron如何换图标？
+
+常理上来说，图标的更换，是打包的时候更换的。所以，在您调试的时候，可能看到的还是默认图标。图标必须是符合标准的图标，才能更换成功。否则会出现某一种窗口状态下，图标丢失的问题。
+
+具体的步骤，可以参考这里：https://js3.org/question/57
+
 ## electron 打包完，有多大？
 
-一般情况下，通过packager或者builder打包完毕后，exe、dll、asr等文件总和的大小为100M左右。而通过builder制作的nsis安装包，一般为32M左右。通过innosetup生成的安装包，一般为31M左右。
+一般情况下，通过packager或者builder打包完毕后，exe、dll、asr等文件总和的大小为100M左右。而通过builder制作的nsis安装包，一般为32M左右。通过innosetup生成的安装包，一般为31M左右。总体来说，体积较大。但是您通过一系列的手段可以有效的减少它的体积，到一个可接受的范围。
 
 ## electron是否支持xp系统
 
