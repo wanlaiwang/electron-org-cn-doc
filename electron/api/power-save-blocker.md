@@ -1,10 +1,10 @@
 # powerSaveBlocker
 
-> 阻止系统进入低功耗（睡眠）模式。
+> Block the system from entering low-power (sleep) mode.
 
-进程： [Main](../glossary.md#main-process)
+线程：[主线程](../glossary.md#main-process)
 
-例如:
+例如：
 
 ```javascript
 const {powerSaveBlocker} = require('electron')
@@ -17,36 +17,30 @@ powerSaveBlocker.stop(id)
 
 ## 方法
 
-`powerSaveBlocker` 模块有如下方法：
+The `powerSaveBlocker` module has the following methods:
 
 ### `powerSaveBlocker.start(type)`
 
-* `type` String - 强行保存阻塞类型。
-  * `prevent-app-suspension` - 阻止应用挂起。
-    保持系统活跃，但是允许屏幕不亮。例如：
-    下载文件或者播放音频。
-  * `prevent-display-sleep`- 阻止应用进入休眠。保持系统和屏幕活跃，屏幕一直亮。例如：播放音频。
+* `type` String - Power save blocker type. 
+  * `prevent-app-suspension` - Prevent the application from being suspended. Keeps system active but allows screen to be turned off. Example use cases: downloading a file or playing audio.
+  * `prevent-display-sleep` - Prevent the display from going to sleep. Keeps system and screen active. Example use case: playing video.
 
-返回 `Integer` - 分配给此阻断器的 blocker ID
+Returns `Integer` - The blocker ID that is assigned to this power blocker
 
-开始阻止系统进入睡眠模式。返回一个整数，这个整数标识了保持活跃的blocker ID。
+Starts preventing the system from entering lower-power mode. Returns an integer identifying the power save blocker.
 
-**注意：** `prevent-display-sleep` 有更高的优先级
-`prevent-app-suspension`。只有最高优先级生效，换句话说, `prevent-display-sleep` 优先级永远高于
-`prevent-app-suspension`。
+**Note:** `prevent-display-sleep` has higher precedence over `prevent-app-suspension`. Only the highest precedence type takes effect. In other words, `prevent-display-sleep` always takes precedence over `prevent-app-suspension`.
 
-例如, A 请求调用了 `prevent-app-suspension`，B请求调用了 `prevent-display-sleep`。`prevent-display-sleep`
-将一直工作，直到B停止调用。在那之后，`prevent-app-suspension`
-才起效。
+For example, an API calling A requests for `prevent-app-suspension`, and another calling B requests for `prevent-display-sleep`. `prevent-display-sleep` will be used until B stops its request. After that, `prevent-app-suspension` is used.
 
 ### `powerSaveBlocker.stop(id)`
 
-* `id` Integer - 通过 `powerSaveBlocker.start` 返回保持活跃的 blocker id.
+* `id` Integer - The power save blocker id returned by `powerSaveBlocker.start`.
 
-让指定 blocker 停止活跃。
+Stops the specified power save blocker.
 
 ### `powerSaveBlocker.isStarted(id)`
 
-* `id` Integer - 通过 `powerSaveBlocker.start` 返回保持活跃的 blocker id.
+* `id` Integer - The power save blocker id returned by `powerSaveBlocker.start`.
 
-返回 boolean，对应的 `powerSaveBlocker` 是否已经启动。
+Returns `Boolean` - Whether the corresponding `powerSaveBlocker` has started.

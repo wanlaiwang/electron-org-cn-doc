@@ -1,61 +1,80 @@
 # webFrame
 
-`web-frame` 模块允许你自定义如何渲染当前网页 .
+> Customize the rendering of the current web page.
 
-例子，放大当前页到 200%.
+进程: [渲染进程](../glossary.md#renderer-process)
+
+An example of zooming current page to 200%.
 
 ```javascript
-var webFrame = require('electron').webFrame
+const {webFrame} = require('electron')
 
 webFrame.setZoomFactor(2)
 ```
 
 ## 方法
 
-`web-frame` 模块有如下方法:
+The `webFrame` module has the following methods:
 
 ### `webFrame.setZoomFactor(factor)`
 
-* `factor` Number - 缩放参数.
+* `factor` Number - Zoom factor.
 
-将缩放参数修改为指定的参数值.缩放参数是百分制的，所以 300% = 3.0.
+Changes the zoom factor to the specified factor. Zoom factor is zoom percent divided by 100, so 300% = 3.0.
 
 ### `webFrame.getZoomFactor()`
 
-返回当前缩放参数值.
+Returns `Number` - The current zoom factor.
 
 ### `webFrame.setZoomLevel(level)`
 
-* `level` Number - 缩放水平
+* `level` Number - Zoom level
 
-将缩放水平修改为指定的水平值. 原始 size 为 0 ，并且每次增长都表示放大 20% 或缩小 20%，默认限制为原始 size 的 300% 到 50% 之间 .
+Changes the zoom level to the specified level. The original size is 0 and each increment above or below represents zooming 20% larger or smaller to default limits of 300% and 50% of original size, respectively.
 
 ### `webFrame.getZoomLevel()`
 
-返回当前缩放水平值.
+Returns `Number` - The current zoom level.
 
 ### `webFrame.setZoomLevelLimits(minimumLevel, maximumLevel)`
 
 * `minimumLevel` Number
 * `maximumLevel` Number
 
-设置缩放水平的最大值和最小值.
+**Deprecated:** Call `setVisualZoomLevelLimits` instead to set the visual zoom level limits. This method will be removed in Electron 2.0.
+
+### `webFrame.setVisualZoomLevelLimits(minimumLevel, maximumLevel)`
+
+* `minimumLevel` Number
+* `maximumLevel` Number
+
+Sets the maximum and minimum pinch-to-zoom level.
+
+### `webFrame.setLayoutZoomLevelLimits(minimumLevel, maximumLevel)`
+
+* `minimumLevel` Number
+* `maximumLevel` Number
+
+Sets the maximum and minimum layout-based (i.e. non-visual) zoom level.
 
 ### `webFrame.setSpellCheckProvider(language, autoCorrectWord, provider)`
 
 * `language` String
 * `autoCorrectWord` Boolean
-* `provider` Object
+* `provider` Object 
+  * `spellCheck` Function - Returns `Boolean` 
+    * `text` String
 
-为输入框或文本域设置一个拼写检查 provider .
+Sets a provider for spell checking in input fields and text areas.
 
-`provider` 必须是一个对象，它有一个 `spellCheck` 方法，这个方法返回扫过的单词是否拼写正确 .
+The `provider` must be an object that has a `spellCheck` method that returns whether the word passed is correctly spelled.
 
-例子，使用 [node-spellchecker][spellchecker] 作为一个 provider:
+An example of using [node-spellchecker](https://github.com/atom/node-spellchecker) as provider:
 
 ```javascript
+const {webFrame} = require('electron')
 webFrame.setSpellCheckProvider('en-US', true, {
-  spellCheck: function (text) {
+  spellCheck (text) {
     return !(require('spellchecker').isMisspelled(text))
   }
 })
@@ -65,37 +84,89 @@ webFrame.setSpellCheckProvider('en-US', true, {
 
 * `scheme` String
 
-注册 `scheme` 为一个安全的 scheme.
+Registers the `scheme` as secure scheme.
 
-
-安全的 schemes 不会引发混合内容 warnings.例如, `https` 和
-`data` 是安全的 schemes ，因为它们不能被活跃网络攻击而失效.
+Secure schemes do not trigger mixed content warnings. For example, `https` and `data` are secure schemes because they cannot be corrupted by active network attackers.
 
 ### `webFrame.registerURLSchemeAsBypassingCSP(scheme)`
 
 * `scheme` String
 
-忽略当前网页内容的安全策略，直接从 `scheme` 加载.
+Resources will be loaded from this `scheme` regardless of the current page's Content Security Policy.
 
-### `webFrame.registerURLSchemeAsPrivileged(scheme)`
+### `webFrame.registerURLSchemeAsPrivileged(scheme[, options])`
 
 * `scheme` String
+* `options` Object (可选) 
+  * `secure` Boolean - (optional) Default true.
+  * `bypassCSP` Boolean - (optional) Default true.
+  * `allowServiceWorkers` Boolean - (optional) Default true.
+  * `supportFetchAPI` Boolean - (optional) Default true.
+  * `corsEnabled` Boolean - (optional) Default true.
 
-通过资源的内容安全策略，注册 `scheme` 为安全的 scheme，允许注册 ServiceWorker并且支持 fetch API.
+Registers the `scheme` as secure, bypasses content security policy for resources, allows registering ServiceWorker and supports fetch API.
+
+Specify an option with the value of `false` to omit it from the registration. An example of registering a privileged scheme, without bypassing Content Security Policy:
+
+```javascript
+const {webFrame} = require('electron')
+webFrame.registerURLSchemeAsPrivileged('foo', { bypassCSP: false })
+```
 
 ### `webFrame.insertText(text)`
 
 * `text` String
 
-向获得焦点的原色插入内容 .
+Inserts `text` to the focused element.
 
-### `webFrame.executeJavaScript(code[, userGesture])`
+### `webFrame.executeJavaScript(code[, userGesture, callback])`
 
 * `code` String
-* `userGesture` Boolean (可选) - 默认为 `false`.
+* `userGesture` Boolean (optional) - Default is `false`.
+* `callback` Function (optional) - Called after script has been executed. 
+  * `result` Any
 
-评估页面代码 .
+Returns `Promise` - A promise that resolves with the result of the executed code or is rejected if the result of the code is a rejected promise.
 
-在浏览器窗口中，一些 HTML APIs ，例如 `requestFullScreen`，只可以通过用户手势来使用.设置`userGesture` 为 `true` 可以突破这个限制 .
+Evaluates `code` in page.
 
-[spellchecker]: https://github.com/atom/node-spellchecker
+In the browser window some HTML APIs like `requestFullScreen` can only be invoked by a gesture from the user. Setting `userGesture` to `true` will remove this limitation.
+
+### `webFrame.getResourceUsage()`
+
+返回 ` Object `:
+
+* `images` [MemoryUsageDetails](structures/memory-usage-details.md)
+* `cssStyleSheets` [MemoryUsageDetails](structures/memory-usage-details.md)
+* `xslStyleSheets` [MemoryUsageDetails](structures/memory-usage-details.md)
+* `fonts` [MemoryUsageDetails](structures/memory-usage-details.md)
+* `other` [MemoryUsageDetails](structures/memory-usage-details.md)
+
+Returns an object describing usage information of Blink's internal memory caches.
+
+```javascript
+const {webFrame} = require('electron')
+console.log(webFrame.getResourceUsage())
+```
+
+This will generate:
+
+```javascript
+{
+  images: {
+    count: 22,
+    size: 2549,
+    liveSize: 2542
+  },
+  cssStyleSheets: { /* same with "images" */ },
+  xslStyleSheets: { /* same with "images" */ },
+  fonts: { /* same with "images" */ },
+  other: { /* same with "images" */ }
+}
+```
+
+### `webFrame.clearCache()`
+
+Attempts to free memory that is no longer being used (like images from a previous navigation).
+
+Note that blindly calling this method probably makes Electron slower since it will have to refill these emptied caches, you should only call it if an event in your app has occurred that makes you think your page is actually using less memory (i.e. you have navigated from a super heavy page to a mostly empty one, and intend to stay there).

@@ -1,77 +1,46 @@
-# Upgrading Chromium Workflow
+# 更新 Chrome 的检查清单
 
-This document is meant to serve as an overview of what steps are needed
-on each Chromium upgrade in Electron.
+本文档旨在概述 Electron 中每次 Chrome 升级需要执行哪些步骤。
 
-## Update libchromiumcontent (a.k.a. libcc)
+除了更新任何 Chrome / Node API 更改的 Electron 代码之外，还需要做这些事情。
 
-- Clone the repo:
-```sh
-git clone git@github.com:electron/libchromiumcontent.git
-cd libchromiumcontent
-```
-- Run bootstrap script to init and sync git submodules:
-```sh
-./script/bootstrap -v
-```
-- Update `VERSION` file to correspond to Chromium version.
-- Run `script/update`, it will probably fail applying patches.
-- Fix failing patches. `script/patch.py` might help.
-  - Don't forget to fix patches in the `patches-mas/` folder.
-- Build libcc:
-```sh
-./script/build
-```
-- Create dist folders which will be used by electron:
-```sh
-./script/create-dist --no_zip
-cd dist/main
-../../tools/generate_filenames_gypi filenames.gypi src shared_library static_library
-cd -
-```
-- Open a pull request to `electron/libchromiumcontent` with the changes.
-- Fix compilation on the all supported platforms/arches.
+- 从 https://github.com/zcbenz/chromium-source-tarball/releases 验证新的 Chrome 版本是否可用
+- 更新 `electron/libchromiumcontent` 副本根下的 `VERSION` 文件
+- 更新 `CLANG_REVISION` 在 `script/update-clang.sh` 中到匹配的版本.Chrome正在使用`libchromiumcontent/src/tools/clang/scripts/update.py`
+- 将 `vendor/node` 升级到对应于 v8 版本的 Node 版本以用于新的Chrome版本。 查看 Node 中的 v8 版本 从 https://nodejs.org/en/download/releases 获取更多详情
+- 升级 `vendor/crashpad`，以便任意崩溃记录器变更需要
+- 升级 `vendor / depot_tools` 用于所需的任何构建工具更改
+- 升级 `libchromiumcontent` SHA-1 下载到 `script/lib/config.py`
+- 打开一个 pull request 在 `electron/libchromiumcontent` 用所做的更改
+- 开一个 pull request `electron/electron` 用所做的更改 
+  - 这应该包括根据需要升级 `vendor/` 中的子模块
+- 验证调试版本构建成功: 
+  - macOS
+  - 32 位 Windows
+  - 64 位 Windows
+  - 32 位 Linux
+  - 64 位 Linux
+  - ARM Linux
+- 验证发行版本构建成功: 
+  - macOS
+  - 32 位 Windows
+  - 64 位 Windows
+  - 32 位 Linux
+  - 64 位 Linux
+  - ARM Linux
+- 验证测试通过: 
+  - macOS
+  - 32 位 Windows
+  - 64 位 Windows
+  - 32 位 Linux
+  - 64 位 Linux
+  - ARM Linux
 
-## Update Electron
+## 验证 ffmpeg 支持
 
-- Set `vendor/libchromiumcontent` revision to a version with the new Chromium.
-  - It will be great if GH builds for this libcc version are already green
-    and its archives are already available. Otherwise everyone would need
-    to build libcc locally in order to try build a new Electron.
-- Set `CLANG_REVISION` in `script/update-clang.sh` to match the version
-  Chromium is using. You can find it in file `src/tools/clang/scripts/update.py` in updated `electron/libchromiumcontent` repo.
-- Run `script/bootstrap.py`.
-- Upgrade Node.js if you are willing to. See the notes below.
-- Fix compilation.
-- Open a pull request on `electron/electron` with the changes.
-  - This should include upgrading the submodules in `vendor/` as needed.
-- Fix failing tests.
+Electron 发行版的 `ffmpeg`，默认包括专有的编解码器 没有这些编解码器的版本也被构建并分发到每个版本。 每个Chrome升级应验证是否仍然支持切换此版本。
 
-## Upgrade Node.js
-
-- Upgrade `vendor/node` to the Node release that corresponds to the v8 version
-  being used in the new Chromium release. See the v8 versions in Node on
-  https://nodejs.org/en/download/releases for more details.
-  - You can find v8 version Chromium is using on [OmahaProxy](http://omahaproxy.appspot.com).
-    If it's not available check `v8/include/v8-version.h`
-    in the Chromium checkout.
-
-## Troubleshooting
-
-**TODO**
-
-
-## Verify ffmpeg Support
-
-Electron ships with a version of `ffmpeg` that includes proprietary codecs by
-default. A version without these codecs is built and distributed with each
-release as well. Each Chrome upgrade should verify that switching this version is
-still supported.
-
-You can verify Electron's support for multiple `ffmpeg` builds by loading the
-following page. It should work with the default `ffmpeg` library distributed
-with Electron and not work with the `ffmpeg` library built without proprietary
-codecs.
+您可以通过加载以下页面来验证Electron对多个`ffmpeg`构建的支持。 它应该与使用Electron分发的默认`ffmpeg`库一起工作，而不使用没有专有编解码器的`ffmpeg`库。
 
 ```html
 <!DOCTYPE html>
@@ -101,8 +70,6 @@ codecs.
 </html>
 ```
 
-## Useful Links
+## 链接
 
-- [Chrome Release Schedule](https://www.chromium.org/developers/calendar)
-- [OmahaProxy](http://omahaproxy.appspot.com)
-- [Chromium Issue Tracker](https://bugs.chromium.org/p/chromium)
+- [Chrome 发布日程](https://www.chromium.org/developers/calendar)

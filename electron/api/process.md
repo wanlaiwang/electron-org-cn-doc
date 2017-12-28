@@ -1,20 +1,18 @@
-# 进程
+# process
 
-> process 对象扩展。
+> Extensions to process object.
 
-Process: [Main](../glossary.md#main-process), [Renderer](../glossary.md#renderer-process)
+进程： [Main](../glossary.md#main-process), [renderer](../glossary.md#renderer-process) 进程
 
-Electron 的 `process` 对象是
-[Node.js `process` 对象](https://nodejs.org/api/process.html) 的扩展。
-它添加了以下事件、属性和方法：
+Electron's `process` object is extended from the [Node.js `process` object](https://nodejs.org/api/process.html). It adds the following events, properties, and methods:
 
 ## 事件
 
-### 事件: 'loaded'
+### Event: 'loaded'
 
-在Electron已经加载了其内部预置脚本和它准备加载网页或者主进程的时候触发。
+Emitted when Electron has loaded its internal initialization script and is beginning to load the web page or the main script.
 
-当node被完全关闭的时候，它可以被预加载脚本使用来添加(原文: removed)与node无关的全局符号来回退到全局范围：
+It can be used by the preload script to add removed Node global symbols back to the global scope when node integration is turned off:
 
 ```javascript
 // preload.js
@@ -28,74 +26,99 @@ process.once('loaded', () => {
 
 ## 属性
 
-### `process.noAsar`
+### `process.defaultApp`
 
-设置它为 `true` 可以使 `asar` 文件在node的内置模块中失效。
-
-### `process.type`
-
-当前 `process` 的类型，值为`"browser"` (即主进程) 或 `"renderer"`。
-
-### `process.versions.electron`
-
-Electron的版本号。
-
-### `process.versions.chrome`
-
-Chrome的版本号。
-
-### `process.resourcesPath`
-
-资源文件夹的路径。
+A `Boolean`. When app is started by being passed as parameter to the default app, this property is `true` in the main process, otherwise it is `undefined`.
 
 ### `process.mas`
 
-在 Mac App Store 的构建中，该属性为 `true`, 其他平台的构建均为 `undefined`。
+A `Boolean`. For Mac App Store build, this property is `true`, for other builds it is `undefined`.
+
+### `process.noAsar`
+
+A `Boolean` that controls ASAR support inside your application. Setting this to `true` will disable the support for `asar` archives in Node's built-in modules.
+
+### `process.noDeprecation`
+
+A `Boolean` that controls whether or not deprecation warnings are printed to `stderr`.  
+Setting this to `true` will silence deprecation warnings. This property is used instead of the `--no-deprecation` command line flag.
+
+### `process.resourcesPath`
+
+A `String` representing the path to the resources directory.
+
+### `process.throwDeprecation`
+
+A `Boolean` that controls whether or not deprecation warnings will be thrown as exceptions. Setting this to `true` will throw errors for deprecations. This property is used instead of the `--throw-deprecation` command line flag.
+
+### `process.traceDeprecation`
+
+A `Boolean` that controls whether or not deprecations printed to `stderr` include their stack trace. Setting this to `true` will print stack traces for deprecations. This property is instead of the `--trace-deprecation` command line flag.
+
+### `process.traceProcessWarnings`
+
+A `Boolean` that controls whether or not process warnings printed to `stderr` include their stack trace. Setting this to `true` will print stack traces for process warnings (including deprecations). This property is instead of the `--trace-warnings` command line flag.
+
+### `process.type`
+
+A `String` representing the current process's type, can be `"browser"` (i.e. main process) or `"renderer"`.
+
+### `process.versions.chrome`
+
+A `String` representing Chrome's version string.
+
+### `process.versions.electron`
+
+A `String` representing Electron's version string.
 
 ### `process.windowsStore`
 
-如果 app 是运行在 Windows Store app (appx) 中，该属性为 `true`, 其他情况均为 `undefined`。
-
-### `process.defaultApp`
-
-当 app 在启动时，被作为参数传递给默认应用程序，在主进程中该属性为 `true`, 其他情况均为 `undefined`。
+A `Boolean`. If the app is running as a Windows Store app (appx), this property is `true`, for otherwise it is `undefined`.
 
 ## 方法
 
-`process` 对象有如下方法：
+The `process` object has the following methods:
 
 ### `process.crash()`
 
-使当前进程的主线程崩溃。
+Causes the main thread of the current process crash.
 
-### `process.hang()`
+### `process.getCPUUsage()`
 
-使当前进程的主线程挂起。
+Returns [`CPUUsage`](structures/cpu-usage.md)
 
-### `process.setFdLimit(maxDescriptors)` _macOS_ _Linux_
+### `process.getIOCounters()` *Windows* *Linux*
 
-* `maxDescriptors` Integer
-
-设置文件描述符软限制于 `maxDescriptors` 或硬限制于OS, 无论它是否低于当前进程。
+Returns [`IOCounters`](structures/io-counters.md)
 
 ### `process.getProcessMemoryInfo()`
 
-返回 `Object`：
+返回 ` Object `:
 
-* `workingSetSize` Integer - 当前固定到实际物理内存的内存量。
-* `peakWorkingSetSize` Integer - 被固定在实际物理内存上的最大内存量。
-* `privateBytes` Integer - 不被其他进程共享的内存量，如JS堆或HTML内容。
-* `sharedBytes` Integer - 进程之间共享的内存量，通常是 Electron 代码本身所消耗的内存。
+* `workingSetSize` Integer - The amount of memory currently pinned to actual physical RAM.
+* `peakWorkingSetSize` Integer - The maximum amount of memory that has ever been pinned to actual physical RAM.
+* `privateBytes` Integer - The amount of memory not shared by other processes, such as JS heap or HTML content.
+* `sharedBytes` Integer - The amount of memory shared between processes, typically memory consumed by the Electron code itself
 
-返回当前进程的内存使用统计信息的对象。请注意，所有数据的单位都是KB。
+Returns an object giving memory usage statistics about the current process. Note that all statistics are reported in Kilobytes.
 
 ### `process.getSystemMemoryInfo()`
 
-返回 `Object`：
+返回 ` Object `:
 
-* `total` Integer - 系统的物理内存总量。
-* `free` Integer - 未被应用程序或磁盘缓存使用的物理内存总量。
-* `swapTotal` Integer - 系统 swap 分区(虚拟内存)总量。  _Windows_ _Linux_
-* `swapFree` Integer - 系统剩余可用的 swap 分区(虚拟内存)量。  _Windows_ _Linux_
+* `total` Integer - The total amount of physical memory in Kilobytes available to the system.
+* `free` Integer - The total amount of memory not being used by applications or disk cache.
+* `swapTotal` Integer - The total amount of swap memory in Kilobytes available to the system. *Windows* *Linux*
+* `swapFree` Integer - The free amount of swap memory in Kilobytes available to the system. *Windows* *Linux*
 
-返回系统的内存使用统计信息的对象。请注意，所有数据的单位都是KB。
+Returns an object giving memory usage statistics about the entire system. Note that all statistics are reported in Kilobytes.
+
+### `process.hang()`
+
+Causes the main thread of the current process hang.
+
+### `process.setFdLimit(maxDescriptors)` *macOS* *Linux*
+
+* `maxDescriptors` Integer
+
+Sets the file descriptor soft limit to `maxDescriptors` or the OS hard limit, whichever is lower for the current process.

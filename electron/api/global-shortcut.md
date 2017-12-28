@@ -1,19 +1,18 @@
 # globalShortcut
 
-> 当应用程序没有键盘焦点时检测键盘事件。
+> 当应用程序没有键盘焦点时监听全局键盘事件。
 
-进程: [Main](../glossary.md#main-process)
+线程：[主线程](../glossary.md#main-process)
 
-`globalShortcut` 模块可以便捷的为你设置（注册/注销）各种自定义操作的快捷键。
+` globalShortcut ` 模块可以在操作系统中注册/注销全局快捷键, 以便可以为各种快捷方式自定义操作。
 
-**注意：** 使用此模块注册的快捷键是系统全局的(QQ截图那种), 不要在应用模块（app module）响应 `ready`
-消息前使用此模块（注册快捷键）。
+** 注意: **快捷方式是全局的; 即使应用程序没有键盘焦点, 它也仍然在持续监听键盘事件。 在应用程序模块发出 `ready ` 事件之前, 不应使用此模块。
 
 ```javascript
 const {app, globalShortcut} = require('electron')
 
 app.on('ready', () => {
-  // Register a 'CommandOrControl+X' shortcut listener.
+  // 注册一个 'CommandOrControl+X' 的全局快捷键
   const ret = globalShortcut.register('CommandOrControl+X', () => {
     console.log('CommandOrControl+X is pressed')
   })
@@ -22,50 +21,46 @@ app.on('ready', () => {
     console.log('registration failed')
   }
 
-  // Check whether a shortcut is registered.
+  // 检查快捷键是否注册成功
   console.log(globalShortcut.isRegistered('CommandOrControl+X'))
 })
 
 app.on('will-quit', () => {
-  // Unregister a shortcut.
+  // 注销快捷键
   globalShortcut.unregister('CommandOrControl+X')
 
-  // Unregister all shortcuts.
+  // 清空所有快捷键
   globalShortcut.unregisterAll()
 })
 ```
 
-## Methods
+## 方法
 
-`globalShortcut` 模块包含以下函数:
+` globalShortcut ` 模块具有以下方法:
 
 ### `globalShortcut.register(accelerator, callback)`
 
 * `accelerator` [Accelerator](accelerator.md)
 * `callback` Function
 
-注册 `accelerator` 快捷键。当用户按下注册的快捷键时将会调用 `callback` 函数。
+注册 ` accelerator ` 的全局快捷键。当用户按下已注册的快捷键时, 将调用 ` callback `函数。
 
-当 accelerator 已经被其他应用程序占用时，此调用将
-默默地失败。这种行为是操作系统的意图，因为它们没有
-想要应用程序争取全局快捷键。
+如果该快捷键已经被其他应用程序使用, 回调函数将不会被触发。 该特性由操作系统定义，因为操作系统不希望多个程序的全局快捷键互相冲突。
 
 ### `globalShortcut.isRegistered(accelerator)`
 
 * `accelerator` [Accelerator](accelerator.md)
 
-返回 `Boolean` - 查询 `accelerator` 快捷键是否已经被注册过了，将会返回 `true` 或 `false`。
+Returns `Boolean` - 表示 `accelerator` 全局快捷键是否注册成功
 
-当 accelerator 已经被其他应用程序占用时，此调用将
-默默地失败。这种行为是操作系统的意图，因为它们没有
-想要应用程序争取全局快捷键。
+当快捷键已经被其他应用程序注册时, 此调用将返回 ` false `。 该特性由操作系统定义，因为操作系统不希望多个程序的全局快捷键互相冲突。
 
 ### `globalShortcut.unregister(accelerator)`
 
 * `accelerator` [Accelerator](accelerator.md)
 
-注销全局快捷键 `accelerator`。
+注销 `accelerator` 的全局快捷键。
 
 ### `globalShortcut.unregisterAll()`
 
-注销本应用程序注册的所有全局快捷键。
+注销所有的全局快捷键（清空该应用程序的全局快捷键）。

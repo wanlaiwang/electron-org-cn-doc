@@ -1,10 +1,10 @@
-# Class：Tray
+## Class: Tray
 
-> 将图标和上下文菜单添加到系统的通知区域。
+> Add icons and context menus to the system's notification area.
 
-可使用的进程: [主进程](../tutorial/quick-start.md#main-process)
+线程：[主线程](../glossary.md#main-process)
 
-`Tray` 是一个 [事件发出者][event-emitter]。
+`Tray` is an [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter).
 
 ```javascript
 const {app, Menu, Tray} = require('electron')
@@ -23,13 +23,13 @@ app.on('ready', () => {
 })
 ```
 
-__平台限制:__
+**Platform limitations:**
 
-* 在 Linux， 如果支持应用指示器则使用它，否则使用 `GtkStatusIcon` 代替。
-* 在 Linux ，配置了只有有了应用指示器的支持, 你必须安装 `libappindicator1` 来让 tray icon 执行。
-* 应用指示器只有在它拥有 context menu 时才会显示。
-* 当在linux 上使用了应用指示器，将忽略点击事件。
-* 在 Linux，为了让单独的 `MenuItem` 起效，需要再次调用 `setContextMenu` 。例如：
+* On Linux the app indicator will be used if it is supported, otherwise `GtkStatusIcon` will be used instead.
+* On Linux distributions that only have app indicator support, you have to install `libappindicator1` to make the tray icon work.
+* App indicator will only be shown when it has a context menu.
+* When app indicator is used on Linux, the `click` event is ignored.
+* On Linux in order for changes made to individual `MenuItem`s to take effect, you have to call `setContextMenu` again. For example:
 
 ```javascript
 const {app, Menu, Tray} = require('electron')
@@ -50,130 +50,159 @@ app.on('ready', () => {
 })
 ```
 
-如果想在所有平台保持完全相同的行为，不应该依赖点击事件，而是一直将一个 context menu 添加到 tray icon。
+* On Windows it is recommended to use `ICO` icons to get best visual effects.
+
+If you want to keep exact same behaviors on all platforms, you should not rely on the `click` event and always attach a context menu to the tray icon.
 
 ### `new Tray(image)`
 
 * `image` ([NativeImage](native-image.md) | String)
 
-创建一个与 `image` 相关的 icon。
+Creates a new tray icon associated with the `image`.
 
-### Instance Events
+### 事件
 
-`Tray` 模块可发出下列事件：
+The `Tray` module emits the following events:
 
 #### Event: 'click'
 
-* `event` Event
+* `event` Event 
   * `altKey` Boolean
   * `shiftKey` Boolean
   * `ctrlKey` Boolean
   * `metaKey` Boolean
-* `bounds` [Rectangle](structures/rectangle.md) - tray icon 的 bounds
+* `bounds` [Rectangle](structures/rectangle.md) - The bounds of tray icon
 
-当 tray icon 被点击的时候发出事件。
+Emitted when the tray icon is clicked.
 
-#### Event: 'right-click' _macOS_ _Windows_
+#### Event: 'right-click' *macOS* *Windows*
 
-* `event` Event
+* `event` Event 
   * `altKey` Boolean
   * `shiftKey` Boolean
   * `ctrlKey` Boolean
   * `metaKey` Boolean
-* `bounds` [Rectangle](structures/rectangle.md) - tray icon 的 bounds
+* `bounds` [Rectangle](structures/rectangle.md) - The bounds of tray icon
 
-当 tray icon 被鼠标右键点击的时候发出事件。
+Emitted when the tray icon is right clicked.
 
-#### Event: 'double-click' _macOS_ _Windows_
+#### Event: 'double-click' *macOS* *Windows*
 
-* `event` Event
+* `event` Event 
   * `altKey` Boolean
   * `shiftKey` Boolean
   * `ctrlKey` Boolean
   * `metaKey` Boolean
-* `bounds` [Rectangle](structures/rectangle.md) - tray icon 的 bounds
+* `bounds` [Rectangle](structures/rectangle.md) - The bounds of tray icon
 
-当 tray icon 被双击的时候发出事件。
+Emitted when the tray icon is double clicked.
 
-#### Event: 'balloon-show' _Windows_
+#### Event: 'balloon-show' *Windows*
 
-当 tray 气泡显示的时候发出事件。
+Emitted when the tray balloon shows.
 
-#### Event: 'balloon-click' _Windows_
+#### Event: 'balloon-click' *Windows*
 
-当 tray 气泡被点击的时候发出事件。
+Emitted when the tray balloon is clicked.
 
-#### Event: 'balloon-closed' _Windows_
+#### Event: 'balloon-closed' *Windows*
 
-当 tray 气泡关闭的时候发出事件，因为超时或人为关闭。
+Emitted when the tray balloon is closed because of timeout or user manually closes it.
 
-#### Event: 'drop' _macOS_
+#### Event: 'drop' *macOS*
 
-当 tray icon 上的任何可拖动项被删除的时候发出事件。
+Emitted when any dragged items are dropped on the tray icon.
 
-#### Event: 'drop-files' _macOS_
+#### Event: 'drop-files' *macOS*
 
-* `event`
-* `files` Array - 已删除文件的路径.
+* `event` Event
+* `files` String[] - The paths of the dropped files.
 
-当 tray icon 上的可拖动文件被删除的时候发出事件。
+Emitted when dragged files are dropped in the tray icon.
 
-#### Event: 'drag-enter' _macOS_
+#### Event: 'drop-text' *macOS*
 
-当一个拖动操作进入 tray icon 的时候发出事件。
+* `event` Event
+* `text` String - the dropped text string
 
-#### Event: 'drag-leave' _macOS_
+Emitted when dragged text is dropped in the tray icon.
 
-当一个拖动操作离开 tray icon 的时候发出事件。
+#### Event: 'drag-enter' *macOS*
 
-#### Event: 'drag-end' _macOS_
+Emitted when a drag operation enters the tray icon.
 
-当一个拖动操作在 tray icon 上或其它地方停止拖动的时候发出事件。
+#### Event: 'drag-leave' *macOS*
 
-### 方法
+Emitted when a drag operation exits the tray icon.
 
-`Tray` 模块有以下方法：
+#### Event: 'drag-end' *macOS*
+
+Emitted when a drag operation ends on the tray or ends at another location.
+
+#### Event: 'mouse-enter' *macOS*
+
+* `event` Event 
+  * `altKey` Boolean
+  * `shiftKey` Boolean
+  * `ctrlKey` Boolean
+  * `metaKey` Boolean
+* `position` [Point](structures/point.md) - The position of the event
+
+Emitted when the mouse enters the tray icon.
+
+#### Event: 'mouse-leave' *macOS*
+
+* `event` Event 
+  * `altKey` Boolean
+  * `shiftKey` Boolean
+  * `ctrlKey` Boolean
+  * `metaKey` Boolean
+* `position` [Point](structures/point.md) - The position of the event
+
+Emitted when the mouse exits the tray icon.
+
+### 实例方法
+
+The `Tray` class has the following methods:
 
 #### `tray.destroy()`
 
-立刻删除 tray icon。
+Destroys the tray icon immediately.
 
 #### `tray.setImage(image)`
 
 * `image` ([NativeImage](native-image.md) | String)
 
-让 `image` 与 tray icon 关联起来。
+Sets the `image` associated with this tray icon.
 
-#### `tray.setPressedImage(image)` _macOS_
+#### `tray.setPressedImage(image)` *macOS*
 
 * `image` [NativeImage](native-image.md)
 
-当在 macOS 上按压 tray icon 的时候，让 `image` 与 tray icon 关联起来。
+Sets the `image` associated with this tray icon when pressed on macOS.
 
 #### `tray.setToolTip(toolTip)`
 
 * `toolTip` String
 
-为 tray icon 设置 hover text。
+Sets the hover text for this tray icon.
 
-#### `tray.setTitle(title)` _macOS_
+#### `tray.setTitle(title)` *macOS*
 
 * `title` String
 
-在状态栏沿着 tray icon 设置标题。
+Sets the title displayed aside of the tray icon in the status bar.
 
-#### `tray.setHighlightMode(mode)` _macOS_
+#### `tray.setHighlightMode(mode)` *macOS*
 
-* `mode` String - Highlight mode with one of the following values:
-  * `selection` - Highlight the tray icon when it is clicked and also when
-    its context menu is open. This is the default.
+* `mode` String - Highlight mode with one of the following values: 
+  * `selection` - Highlight the tray icon when it is clicked and also when its context menu is open. This is the default.
   * `always` - Always highlight the tray icon.
   * `never` - Never highlight the tray icon.
 
-设置 tray icon 的背景色变为高亮（blue）。
+Sets when the tray's icon background becomes highlighted (in blue).
 
-**注意：** 你可以使用 `highlightMode` 和一个 [`BrowserWindow`](browser-window.md)
-通过在窗口可见性时切换 `'never'` 和 `'always'` 模式变化。
+**Note:** You can use `highlightMode` with a [`BrowserWindow`](browser-window.md) by toggling between `'never'` and `'always'` modes when the window visibility changes.
 
 ```javascript
 const {BrowserWindow, Tray} = require('electron')
@@ -192,40 +221,36 @@ win.on('hide', () => {
 })
 ```
 
-#### `tray.displayBalloon(options)` _Windows_
+#### `tray.displayBalloon(options)` *Windows*
 
-* `options` Object
-  * `icon` ([NativeImage](native-image.md) | String) - (可选)
-  * `title` String - (可选)
-  * `content` String - (可选)
+* `options` Object 
+  * `icon` ([NativeImage](native-image.md) | String) - (optional)
+  * `title` String - (optional)
+  * `content` String - (optional)
 
-展示一个 tray balloon。
+Displays a tray balloon.
 
-#### `tray.popUpContextMenu([menu, position])` _macOS_ _Windows_
+#### `tray.popUpContextMenu([menu, position])` *macOS* *Windows*
 
 * `menu` Menu (optional)
-* `position` Object (可选) - 上托位置.
-  * `x` Integer
-  * `y` Integer
+* `position` [Point](structures/point.md) (optional) - The pop up position.
 
-从 tray icon 上托出 context menu。当划过 `menu` 的时候， `menu` 显示，代替 tray 的 context menu。
+Pops up the context menu of the tray icon. When `menu` is passed, the `menu` will be shown instead of the tray icon's context menu.
 
-`position` 只在 windows 上可用，默认为 (0, 0)。
+The `position` is only available on Windows, and it is (0, 0) by default.
 
 #### `tray.setContextMenu(menu)`
 
 * `menu` Menu
 
-为这个 icon 设置 context menu。
+Sets the context menu for this icon.
 
-#### `tray.getBounds()` _macOS_ _Windows_
+#### `tray.getBounds()` *macOS* *Windows*
 
-返回 [`Rectangle`](structures/rectangle.md)
+Returns [`Rectangle`](structures/rectangle.md)
 
-这个 tray icon 的 `bounds` 对象。
+The `bounds` of this tray icon as `Object`.
 
 #### `tray.isDestroyed()`
 
-返回 `Boolean` - tray icon 是否销毁。
-
-[event-emitter]: https://nodejs.org/api/events.html#events_class_eventemitter
+Returns `Boolean` - Whether the tray icon is destroyed.

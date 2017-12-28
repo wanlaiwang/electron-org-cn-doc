@@ -1,4 +1,4 @@
-# ScrubberItem Object
+# ScrubberItem 对象
 
-* `label` String - (Optional) The text to appear in this item
-* `icon` NativeImage - (Optional) The image to appear in this item
+* `label` String - (可选) item展示的文本。
+* `icon` NativeImage - (可选) item展示的图标。

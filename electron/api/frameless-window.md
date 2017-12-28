@@ -1,25 +1,26 @@
-# Frameless Window
+# 无边框窗口
 
-> 打开一个窗体没有工具栏，边框，或者其它图形化的"chrome"
+> 打开一个无工具栏、边框、和其它图形化界面的"谷歌浏览器"窗口
 
-无边框窗口指的是：除页面本身以外，不包含任何其它可视部分的窗口([chrome](https://developer.mozilla.org/en-US/docs/Glossary/Chrome))。
-像工具栏，这不是页面的一部分。这些是[`BrowserWindow`](browser-window.md) 类的选项。
+无边框窗口它不是完整的谷歌浏览器窗口，它只是窗口的一部分，像工具栏，它不是网页的一个部分 These are options on the [`BrowserWindow`](browser-window.md) class.
 
-## 创建无边框窗口
+## Create a frameless window
 
-为了创建一个无边框窗口，你需要设置[BrowserWindow](browser-window.md)的选项`frame`为`false`:
+To create a frameless window, you need to set `frame` to `false` in [BrowserWindow](browser-window.md)'s `options`:
 
 ```javascript
-const BrowserWindow = require('electron').BrowserWindow
-var win = new BrowserWindow({ width: 800, height: 600, frame: false })
+const {BrowserWindow} = require('electron')
+let win = new BrowserWindow({width: 800, height: 600, frame: false})
+win.show()
 ```
 
-### macOS上的替代方案
+### Alternatives on macOS
 
-在macOS 10.9 Mavericks或者更新的版本中，有一个替代方案，可以生成一个无边框窗口。设置`frame`为`false`，会隐藏标题栏以及窗口控制区域（最大化按钮、最小化按钮、还原按钮）。你可能想隐藏标题栏，也希望你的页面上下文能够继承全屏大小，也同时又想保持对窗口的控制("traffic lights")。你可以通过指定`titleBarStyle`这一选项来达到目的。
+On macOS 10.9 Mavericks and newer, there's an alternative way to specify a chromeless window. Instead of setting `frame` to `false` which disables both the titlebar and window controls, you may want to have the title bar hidden and your content extend to the full window size, yet still preserve the window controls ("traffic lights") for standard window actions. You can do so by specifying the `titleBarStyle` option:
 
-#### `hide`
-你将可以得到一个隐藏的标题栏和一个全尺寸的内容窗体，然后在左上方仍然存在标准的窗体交通灯控制按钮("traffic lights")。
+#### `hidden`
+
+Results in a hidden title bar and a full size content window, yet the title bar still has the standard window controls (“traffic lights”) in the top left.
 
 ```javascript
 const {BrowserWindow} = require('electron')
@@ -28,7 +29,8 @@ win.show()
 ```
 
 #### `hiddenInset`
-你会得到一个隐藏标题栏的另外一种外观，交通灯按钮的位置，比标准的情况下，更加远离窗口的边缘位置。
+
+Results in a hidden title bar with an alternative look where the traffic light buttons are slightly more inset from the window edge.
 
 ```javascript
 const {BrowserWindow} = require('electron')
@@ -37,7 +39,8 @@ win.show()
 ```
 
 #### `customButtonsOnHover`
-当激活窗体左上角的时候，将会显示一组定制的交通灯按钮组合，包括关闭、最小化、全屏按钮。这些定制的按钮可以避免在标准窗体工具栏按钮上的一些鼠标事件issue。这个选项只在无边框窗体中才会生效。
+
+Uses custom drawn close, miniaturize, and fullscreen buttons that display when hovering in the top left of the window. These custom buttons prevent issues with mouse events that occur with the standard window toolbar buttons. This option is only applicable for frameless windows.
 
 ```javascript
 const {BrowserWindow} = require('electron')
@@ -45,9 +48,9 @@ let win = new BrowserWindow({titleBarStyle: 'customButtonsOnHover', frame: false
 win.show()
 ```
 
-## 透明窗口
+## Transparent window
 
-通过设置`transparent` 选项为 `true`，你能使无边框窗口透明:
+By setting the `transparent` option to `true`, you can also make the frameless window transparent:
 
 ```javascript
 const {BrowserWindow} = require('electron')
@@ -55,56 +58,39 @@ let win = new BrowserWindow({transparent: true, frame: false})
 win.show()
 ```
 
-### 限制
+### Limitations
 
-* 你无法点击透明的区域。我们正在采用一个新的API去设置窗口的外形以解决这个问题，
-  详见[our issue](https://github.com/electron/electron/issues/1335)。
-* 透明窗口是不可调整大小的。在某些平台上，设置`resizable`为`true`也许会造成这个透明窗口停止工作。
-* `blur`滤光器器只适用于网页，所以没法将模糊效果用于窗口之下(比如：其它在用户的系统中打开的应用)。
-* 在Windows操作系统中，当DWM（桌面窗口管理器）被禁用时，透明窗口不能正常工作。
-* Linux用户需要在命令行中输入`--enable-transparent-visuals --disable-gpu`，来禁用GPU以及允许ARGB去渲染透明窗口，这是由于一个Linux上的上游bug[alpha channel doesn't work on some NVidia drivers](https://code.google.com/p/chromium/issues/detail?id=369209)所造成的
-* 在Mac上，透明窗口的阴影不会被显示出来的。
+* You can not click through the transparent area. We are going to introduce an API to set window shape to solve this, see [our issue](https://github.com/electron/electron/issues/1335) for details.
+* Transparent windows are not resizable. Setting `resizable` to `true` may make a transparent window stop working on some platforms.
+* The `blur` filter only applies to the web page, so there is no way to apply blur effect to the content below the window (i.e. other applications open on the user's system).
+* On Windows operating systems, transparent windows will not work when DWM is disabled.
+* On Linux users have to put `--enable-transparent-visuals --disable-gpu` in the command line to disable GPU and allow ARGB to make transparent window, this is caused by an upstream bug that [alpha channel doesn't work on some NVidia drivers](https://code.google.com/p/chromium/issues/detail?id=369209) on Linux.
+* On Mac the native window shadow will not be shown on a transparent window.
 
-## 可点透区域
-为了创建一个可点透窗体，比如，让窗体忽略所有的鼠标时间，你可以调用[win.setIgnoreMouseEvents(ignore)](browser-window#winsetignoremouseeventsignore) API:
+## Click-through window
+
+To create a click-through window, i.e. making the window ignore all mouse events, you can call the [win.setIgnoreMouseEvents(ignore)](browser-window.md#winsetignoremouseeventsignore) API:
+
 ```javascript
 const {BrowserWindow} = require('electron')
 let win = new BrowserWindow()
 win.setIgnoreMouseEvents(true)
 ```
 
-### Forwarding
-Ignoring mouse messages makes the web page oblivious to mouse movement, meaning that mouse movement events will not be emitted. On Windows operating systems an optional parameter can be used to forward mouse move messages to the web page, allowing events such as `mouseleave` to be emitted:
+## Draggable region
 
-```javascript
-let win = require('electron').remote.getCurrentWindow()
-let el = document.getElementById('clickThroughElement')
-el.addEventListener('mouseenter', () => {
-  win.setIgnoreMouseEvents(true, {forward: true})
-})
-el.addEventListener('mouseleave', () => {
-  win.setIgnoreMouseEvents(false)
-})
-```
+By default, the frameless window is non-draggable. Apps need to specify `-webkit-app-region: drag` in CSS to tell Electron which regions are draggable (like the OS's standard titlebar), and apps can also use `-webkit-app-region: no-drag` to exclude the non-draggable area from the draggable region. Note that only rectangular shapes are currently supported.
 
-This makes the web page click-through when over `el`, and returns to normal outside it.
+Note: `-webkit-app-region: drag` is known to have problems while the developer tools are open. See this [GitHub issue](https://github.com/electron/electron/issues/3647) for more information including a workaround.
 
-
-## 可拖动区域
-
-默认情况下，无边框窗口是不可拖动的。应用在CSS中设置`-webkit-app-region: drag`
-告诉Electron哪个区域是可拖动的(比如系统标准的标题栏)，应用也可以设置`-webkit-app-region: no-drag`
-在可拖动区域中排除不可拖动的区域。需要注意的是，目前只支持矩形区域。
-
-为了让整个窗口可拖动，你可以在`body`的样式中添加`-webkit-app-region: drag`:
+To make the whole window draggable, you can add `-webkit-app-region: drag` as `body`'s style:
 
 ```html
 <body style="-webkit-app-region: drag">
 </body>
 ```
 
-另外需要注意的是，如果你设置了整个窗口可拖动，你必须标记按钮为不可拖动的(non-draggable)，
-否则用户不能点击它们:
+And note that if you have made the whole window draggable, you must also mark buttons as non-draggable, otherwise it would be impossible for users to click on them:
 
 ```css
 button {
@@ -112,12 +98,11 @@ button {
 }
 ```
 
-如果你设置一个自定义的标题栏可拖动，你同样需要设置标题栏中所有的按钮为不可拖动(non-draggable)。
+If you're setting just a custom titlebar as draggable, you also need to make all buttons in titlebar non-draggable.
 
-## 文本选择
+## Text selection
 
-在一个无边框窗口中，拖动动作会与文本选择发生冲突。比如，当你拖动标题栏，偶尔会选中标题栏上的文本。
-为了防止这种情况发生，你需要向下面这样在一个可拖动区域中禁用文本选择:
+In a frameless window the dragging behaviour may conflict with selecting text. For example, when you drag the titlebar you may accidentally select the text on the titlebar. To prevent this, you need to disable text selection within a draggable area like this:
 
 ```css
 .titlebar {
@@ -126,8 +111,6 @@ button {
 }
 ```
 
-## 上下文菜单
+## Context menu
 
-在一些平台上，可拖动区域会被认为是非客户端框架(non-client frame)，所有当你点击右键时，一个系统菜单会弹出。
-为了保证上下文菜单在所有平台下正确的显示，你不应该在可拖动区域使用自定义上下文菜单。
-
+On some platforms, the draggable area will be treated as a non-client frame, so when you right click on it a system menu will pop up. To make the context menu behave correctly on all platforms you should never use a custom context menu on draggable areas.

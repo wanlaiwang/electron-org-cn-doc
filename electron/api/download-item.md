@@ -1,11 +1,13 @@
-# DownloadItem
+## 类：downloadItem
 
-`DownloadItem`(下载项)是一个在Electron中展示下载项的
-[EventEmitter](http://nodejs.org/api/events.html#events_class_events_eventemitter)。
-它被用于`Session`模块中的`will-download`事件，允许用户去控制下载项。
+> 控制来自于远程资源的文件下载。
+
+线程：[主线程](../glossary.md#main-process)
+
+在Electron中，`DownloadItem` 是一个代表下载项目的`EventEmitter`。 它用于`will-download`事件以及`Session`类，并且允许用户控制下载项目。
 
 ```javascript
-// In the main process.
+// 在主进程.
 const {BrowserWindow} = require('electron')
 let win = new BrowserWindow()
 win.webContents.session.on('will-download', (event, item, webContents) => {
@@ -33,95 +35,123 @@ win.webContents.session.on('will-download', (event, item, webContents) => {
 })
 ```
 
-## 事件
+### 事件
 
-### 事件: 'updated'
+#### 事件名: 'updated'
 
-* `event` Event
-* `state` String
-  * `progressing` - 下载中。
-  * `interrupted` - 下载被中断且可恢复。
-
-当`downloadItem`获得更新且未终止时触发。
-
-### 事件: 'done'
+返回:
 
 * `event` Event
 * `state` String
-  * `completed` - 下载成功。
-  * `cancelled` - 下载被取消。
-  * `interrupted` - 下载被中断且不可恢复。
 
-当下载处于一个终止状态时触发。这包括了一个完成的下载，一个被取消的下载(via `downloadItem.cancel()`),
-和一个被意外中断的下载(无法恢复)。
+当下载正在执行但还没完成的时候发出。
 
-## 方法
+状态可以是以下之一：
 
-`downloadItem`对象有以下一些方法:
+* `progressing` - 下载正在进行中
+* `interrupted` - 下载已经中断，可以恢复
 
-### `downloadItem.setSavePath(path)`
+#### 事件名: 'done'
 
-* `path` String - 设置下载项的保存文件路径.
+返回:
 
-这个API仅仅在`session`的`will-download`回调函数中可用。
-如果用户没有这个API去设置保存路径，Electron会用原始程序去确定保存路径(通常提示一个保存对话框)。
+* `event` Event
+* `state` String
 
-### `downloadItem.pause()`
+当下载文件已经到本地时发出。这包括一个完整的下载，取消下载（`downloadItem.cancel()`）和中断不可恢复的下载。
+
+状态可以是以下之一：
+
+* `completed` - 下载成功完成 
+* `cancelled` - 下载已被取消
+* `interrupted` - 下载已经中断，无法恢复
+
+### 实例方法
+
+`downloadItem` 对象具有以下方法：
+
+#### `downloadItem.setSavePath(path)`
+
+* `path` String - 设置下载项目的保存文件路径。
+
+该API仅能在`will-download` 方法的回调中使用。 如果用户没有通过API设置保存路径，Electron将使用默认方式来确定保存路径（通常会提示保存对话框）。
+
+#### `downloadItem.getSavePath()`
+
+返回 `String` - 下载项目的保存路径。这将是通过`downloadItem.setSavePath(path)`设置的路径，或从显示的保存对话框中选择的路径。
+
+#### `downloadItem.pause()`
 
 暂停下载。
 
-### `downloadItem.isPause()`
+#### `downloadItem.isPaused()`
 
-返回一个`Boolean`表示是否暂定下载。
+返回`Boolean` - 下载是否暂停。
 
-### `downloadItem.resume()`
+#### `downloadItem.resume()`
 
-恢复被暂停的下载。
+恢复已暂停的下载。
 
-### `downloadItem.canResume()`
+**笔记：** 为了支持断点下载，必须要从支持范围内请求下载，并且提供`Last-Modified` 和 `ETag`的值。 否则，`resume()` 将关闭以前接收到的字节并从头开始重新开始下载。
 
-返回一个`Boolean`表示是否可以恢复被暂停的下载。
+#### `downloadItem.canResume()`
 
-### `downloadItem.cancel()`
+恢复布尔值 - 是否可以恢复下载。
+
+#### `downloadItem.cancel()`
 
 取消下载操作。
 
-### `downloadItem.getURL()`
+#### `downloadItem.getURL()`
 
-以`String`形式返回一个该下载项的下载源url。
+返回`String` - 从中​​下载项目的源URL。
 
-### `downloadItem.getMimeType()`
+#### `downloadItem.getMimeType()`
 
-返回一个表示mime类型的`String`。
+返回`String` - MIME类型的文件。
 
-### `downloadItem.hasUserGesture()`
+#### `downloadItem.hasUserGesture()`
 
-返回一个`Boolean`表示下载是否有用户动作。
+返回`Boolean` - 下载是否具有用户手势。
 
-### `downloadItem.getFilename()`
+#### `downloadItem.getFilename()`
 
-返回一个表示下载项文件名的`String`。
+返回`String` - 下载项目的文件名。
 
-**Note:** 此文件名不一定总是保存在本地硬盘上的实际文件名。
-如果用户在下载保存对话框中修改了文件名，保存的文件的实际名称会与`downloadItem.getFilename()`方法返回的文件名不同。
+**笔记：**文件名与本地磁盘中保存的实际文件名不尽相同。 如果用户在提示的下载保存对话框中更改文件名称，保存的文件的实际名称将会不同。
 
-### `downloadItem.getTotalBytes()`
+#### `downloadItem.getTotalBytes()`
 
-返回一个表示下载项总字节数大小的`Integer`。如果大小未知，返回0。
+返回`Integer` - 下载项目的总大小（以字节为单位）。
 
-### `downloadItem.getReceivedBytes()`
+如果大小未知，则返回0。
 
-返回一个表示下载项已经接收的字节数大小的`Integer`。
+#### `downloadItem.getReceivedBytes()`
 
-### `downloadItem.getContentDisposition()`
+返回`Integer` - 下载项目的接收字节。
 
-以`String`形式返回响应头(response header)中的`Content-Disposition`域。
+#### `downloadItem.getContentDisposition()`
 
-### `downloadItem.getState()`
+返回`String` - 响应头中的Content-Disposition字段。
 
-以`String`形式返回该下载项的目前状态。
+#### `downloadItem.getState()`
 
-* `progressing` - 下载中。
-* `completed` - 下载成功。
-* `cancelled` - 下载被取消。
-* `interrupted` - 下载被中断。
+返回 `String` - 表示当前状态.。可能是 `progressing`, `completed`, `cancelled` 或者 `interrupted`。
+
+**笔记：** 以下方法特别有助于在会话重新启动时恢复取消的项目。
+
+#### `downloadItem.getURLChain()`
+
+返回String [] - 包含任何重定向的项目的完整url链。
+
+#### `downloadItem.getLastModifiedTime()`
+
+返回String - Last-Modified的值。
+
+#### `downloadItem.getETag()`
+
+返回String - ETag的值。
+
+#### `downloadItem.getStartTime()`
+
+返回`Double` - 自下载开始时的UNIX纪元以来的秒数。

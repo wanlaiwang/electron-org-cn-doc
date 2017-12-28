@@ -2,19 +2,19 @@
 
 > Create a slider in the touch bar for native macOS applications
 
-Process: [Main]({{site.baseurl}}/docs/tutorial/quick-start#main-process)
+线程：[主线程](../tutorial/quick-start.md#main-process)
 
-### `new TouchBarSlider(options)` _Experimental_
+### `new TouchBarSlider(options)` *Experimental*
 
-*   `options` Object
-    *   `label` String (optional) - Label text.
-    *   `value` Integer (optional) - Selected value.
-    *   `minValue` Integer (optional) - Minimum value.
-    *   `maxValue` Integer (optional) - Maximum value.
-    *   `change` Function (optional) - Function to call when the slider is changed.
-        *   `newValue` Number - The value that the user selected on the Slider
+* `options` Object 
+  * `label` String (optional) - Label text.
+  * `value` Integer (optional) - Selected value.
+  * `minValue` Integer (optional) - Minimum value.
+  * `maxValue` Integer (optional) - Maximum value.
+  * `change` Function (optional) - Function to call when the slider is changed. 
+    * `newValue` Number - The value that the user selected on the Slider
 
-### Instance Properties
+### 实例属性
 
 The following properties are available on instances of `TouchBarSlider`:
 

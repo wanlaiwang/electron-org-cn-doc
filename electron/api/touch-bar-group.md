@@ -2,9 +2,9 @@
 
 > Create a group in the touch bar for native macOS applications
 
-Process: [Main]({{site.baseurl}}/docs/tutorial/quick-start#main-process)
+线程：[主线程](../tutorial/quick-start.md#main-process)
 
-### `new TouchBarGroup(options)` _Experimental_
+### `new TouchBarGroup(options)` *Experimental*
 
-*   `options` Object
-    *   `items` [TouchBar]({{site.baseurl}}/docs/api/touch-bar) - Items to display as a group.
+* `options` Object 
+  * `items` [TouchBar](touch-bar.md) - Items to display as a group.

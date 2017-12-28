@@ -1,34 +1,57 @@
 # nativeImage
 
-在 Electron 中, 对所有创建 images 的 api 来说, 你可以使用文件路径或 `nativeImage` 实例. 如果使用 `null` ，将创建一个空的image 对象.
+> 使用 PNG 或 JPG 文件创建托盘、坞站和应用程序图标。
 
-例如, 当创建一个 tray 或设置窗口的图标时候，你可以使用一个字符串的图片路径 :
+进程： [Main](../glossary.md#main-process), [renderer](../glossary.md#renderer-process) 进程
+
+在Electron中, 对于拍摄图像的 api, 您可以传递文件路径或 ` NativeImage ` 实例。当传递 ` null ` 时, 将使用空图像。
+
+例如, 创建托盘或设置窗口图标时, 可以将图像文件路径作为 ` String ` 传递:
 
 ```javascript
-var appIcon = new Tray('/Users/somebody/images/icon.png')
-var window = new BrowserWindow({icon: '/Users/somebody/images/window.png'})
+const {BrowserWindow, Tray} = require('electron')
+
+const appIcon = new Tray('/Users/somebody/images/icon.png')
+let win = new BrowserWindow({icon: '/Users/somebody/images/window.png'})
+console.log(appIcon, win)
 ```
 
-或者从剪切板中读取图片，它返回的是 `nativeImage`:
+或者从剪贴板中读取返回 ` NativeImage ` 的图像:
 
 ```javascript
-var image = clipboard.readImage()
-var appIcon = new Tray(image)
+const {clipboard, Tray} = require('electron')
+const image = clipboard.readImage()
+const appIcon = new Tray(image)
+console.log(appIcon)
 ```
 
 ## 支持的格式
 
-当前支持 `PNG` 和 `JPEG` 图片格式. 推荐 `PNG` ，因为它支持透明和无损压缩.
+当前支持 ` PNG ` 和 ` JPEG ` 图像格式。建议使用 ` PNG `, 因为它支持透明和无损压缩。
 
-在 Windows, 你也可以使用 `ICO` 图标的格式.
+在 Windows 上, 还可以从文件路径加载 ` ICO ` 图标。为了最佳的视觉质量, 建议在中至少包括以下大小:
 
-## 高分辨率图片
+* Small icon 
+ * 16x16 (100% DPI scale)
+ * 20x20 (125% DPI scale)
+ * 24x24 (150% DPI scale)
+ * 32x32 (200% DPI scale)
+* Large icon 
+ * 32x32 (100% DPI scale)
+ * 40x40 (125% DPI scale)
+ * 48x48 (150% DPI scale)
+ * 64x64 (200% DPI scale)
+* 256x256
 
-如果平台支持 high-DPI，你可以在图片基础路径后面添加 `@2x` ，可以标识它为高分辨率的图片.
+Check the *Size requirements* section in [this article](https://msdn.microsoft.com/en-us/library/windows/desktop/dn742485(v=vs.85).aspx).
 
-例如，如果 `icon.png` 是一个普通图片并且拥有标准分辨率，然后 `icon@2x.png`将被当作高分辨率的图片处理，它将拥有双倍 DPI 密度.
+## 高分辨率
 
-如果想同时支持展示不同分辨率的图片，你可以将拥有不同size 的图片放在同一个文件夹下，不用 DPI 后缀.例如 :
+On platforms that have high-DPI support such as Apple Retina displays, you can append `@2x` after image's base filename to mark it as a high resolution image.
+
+For example if `icon.png` is a normal image that has standard resolution, then `icon@2x.png` will be treated as a high resolution image that has double DPI density.
+
+If you want to support displays with different DPI densities at the same time, you can put images with different sizes in the same folder and use the filename without DPI suffixes. For example:
 
 ```text
 images/
@@ -37,12 +60,13 @@ images/
 └── icon@3x.png
 ```
 
-
 ```javascript
-var appIcon = new Tray('/Users/somebody/images/icon.png')
+const {Tray} = require('electron')
+let appIcon = new Tray('/Users/somebody/images/icon.png')
+console.log(appIcon)
 ```
 
-也支持下面这些 DPI 后缀:
+Following suffixes for DPI are also supported:
 
 * `@1x`
 * `@1.25x`
@@ -56,93 +80,147 @@ var appIcon = new Tray('/Users/somebody/images/icon.png')
 * `@4x`
 * `@5x`
 
-## 模板图片
+## Template Image
 
-模板图片由黑色和清色(和一个 alpha 通道)组成.
-模板图片不是单独使用的，而是通常和其它内容混合起来创建期望的最终效果.
+Template images consist of black and clear colors (and an alpha channel). Template images are not intended to be used as standalone images and are usually mixed with other content to create the desired final appearance.
 
-最常见的用力是将模板图片用到菜单栏图片上，所以它可以同时适应亮、黑不同的菜单栏.
+The most common case is to use template images for a menu bar icon so it can adapt to both light and dark menu bars.
 
-**注意:** 模板图片只在 macOS 上可用.
+**Note:** Template image is only supported on macOS.
 
-为了将图片标识为一个模板图片，它的文件名应当以 `Template` 结尾. 例如:
+To mark an image as a template image, its filename should end with the word `Template`. For example:
 
 * `xxxTemplate.png`
 * `xxxTemplate@2x.png`
 
 ## 方法
 
-`nativeImage` 类有如下方法:
+The `nativeImage` module has the following methods, all of which return an instance of the `NativeImage` class:
 
 ### `nativeImage.createEmpty()`
 
-创建一个空的 `nativeImage` 实例.
+Returns `NativeImage`
+
+Creates an empty `NativeImage` instance.
 
 ### `nativeImage.createFromPath(path)`
 
 * `path` String
 
-从指定 `path` 创建一个新的 `nativeImage` 实例 .
+Returns `NativeImage`
 
-### `nativeImage.createFromBuffer(buffer[, scaleFactor])`
+Creates a new `NativeImage` instance from a file located at `path`. This method returns an empty image if the `path` does not exist, cannot be read, or is not a valid image.
 
-* `buffer` [Buffer][buffer]
-* `scaleFactor` Double (可选)
+```javascript
+const nativeImage = require('electron').nativeImage
 
-从 `buffer` 创建一个新的 `nativeImage` 实例 .默认  `scaleFactor` 是 1.0.
+let image = nativeImage.createFromPath('/Users/somebody/images/icon.png')
+console.log(image)
+```
+
+### `nativeImage.createFromBuffer(buffer[, options])`
+
+* `buffer` [Buffer](https://nodejs.org/api/buffer.html#buffer_class_buffer)
+* `options` Object (optional) * `width` Integer (optional) - Required for bitmap buffers. * `height` Integer (optional) - Required for bitmap buffers. * `scaleFactor` Double (optional) - Defaults to 1.0.
+
+Returns `NativeImage`
+
+Creates a new `NativeImage` instance from `buffer`.
 
 ### `nativeImage.createFromDataURL(dataURL)`
 
 * `dataURL` String
 
-从 `dataURL` 创建一个新的 `nativeImage` 实例 .
+Returns `NativeImage`
 
-## 实例方法
+Creates a new `NativeImage` instance from `dataURL`.
 
-`nativeImage` 有如下方法:
+## Class: NativeImage
 
-```javascript
-const nativeImage = require('electron').nativeImage
+> Natively wrap images such as tray, dock, and application icons.
 
-var image = nativeImage.createFromPath('/Users/somebody/images/icon.png')
-```
+进程： [Main](../glossary.md#main-process), [renderer](../glossary.md#renderer-process) 进程
 
-### `image.toPNG()`
+### 实例方法
 
-返回一个 [Buffer][buffer] ，它包含了图片的 `PNG` 编码数据.
+The following methods are available on instances of the `NativeImage` class:
 
-### `image.toJPEG(quality)`
+#### `image.toPNG([options])`
 
-* `quality` Integer (**必须**) - 在 0 - 100 之间.
+* `options` Object (optional) * `scaleFactor` Double (optional) - Defaults to 1.0.
 
-返回一个 [Buffer][buffer] ，它包含了图片的 `JPEG` 编码数据.
+Returns `Buffer` - A [Buffer](https://nodejs.org/api/buffer.html#buffer_class_buffer) that contains the image's `PNG` encoded data.
 
-### `image.toDataURL()`
+#### `image.toJPEG(quality)`
 
-返回图片数据的 URL.
+* `quality` Integer (**required**) - Between 0 - 100.
 
-### `image.getNativeHandle()` _macOS_
+Returns `Buffer` - A [Buffer](https://nodejs.org/api/buffer.html#buffer_class_buffer) that contains the image's `JPEG` encoded data.
 
-返回一个保存了 c 指针的 [Buffer][buffer] 来潜在处理原始图像.在macOS, 将会返回一个 `NSImage` 指针实例.
+#### `image.toBitmap([options])`
 
-注意那返回的指针是潜在原始图像的弱指针，而不是一个复制，你_必须_ 确保与 `nativeImage` 的关联不间断 .
+* `options` Object (optional) * `scaleFactor` Double (optional) - Defaults to 1.0.
 
-### `image.isEmpty()`
+Returns `Buffer` - A [Buffer](https://nodejs.org/api/buffer.html#buffer_class_buffer) that contains a copy of the image's raw bitmap pixel data.
 
-返回一个 boolean ，标识图片是否为空.
+#### `image.toDataURL([options])`
 
-### `image.getSize()`
+* `options` Object (optional) * `scaleFactor` Double (optional) - Defaults to 1.0.
 
-返回图片的 size.
+Returns `String` - The data URL of the image.
 
-[buffer]: https://nodejs.org/api/buffer.html#buffer_class_buffer
+#### `image.getBitmap([options])`
 
-### `image.setTemplateImage(option)`
+* `options` Object (optional) * `scaleFactor` Double (optional) - Defaults to 1.0.
+
+Returns `Buffer` - A [Buffer](https://nodejs.org/api/buffer.html#buffer_class_buffer) that contains the image's raw bitmap pixel data.
+
+The difference between `getBitmap()` and `toBitmap()` is, `getBitmap()` does not copy the bitmap data, so you have to use the returned Buffer immediately in current event loop tick, otherwise the data might be changed or destroyed.
+
+#### `image.getNativeHandle()` *macOS*
+
+Returns `Buffer` - A [Buffer](https://nodejs.org/api/buffer.html#buffer_class_buffer) that stores C pointer to underlying native handle of the image. On macOS, a pointer to `NSImage` instance would be returned.
+
+Notice that the returned pointer is a weak pointer to the underlying native image instead of a copy, so you *must* ensure that the associated `nativeImage` instance is kept around.
+
+#### `image.isEmpty()`
+
+Returns `Boolean` - Whether the image is empty.
+
+#### `image.getSize()`
+
+Returns [`Size`](structures/size.md)
+
+#### `image.setTemplateImage(option)`
 
 * `option` Boolean
 
-将图片标识为模板图片.
+Marks the image as a template image.
 
-### `image.isTemplateImage()`
+#### `image.isTemplateImage()`
 
-返回一个 boolean ，标识图片是否是模板图片.
+Returns `Boolean` - Whether the image is a template image.
+
+#### `image.crop(rect)`
+
+* `rect` [Rectangle](structures/rectangle.md) - The area of the image to crop
+
+Returns `NativeImage` - The cropped image.
+
+#### `image.resize(options)`
+
+* `options` Object * `width` Integer (optional) - Defaults to the image's width. * `height` Integer (optional) - Defaults to the image's height * `quality` String (optional) - The desired quality of the resize image. Possible values are `good`, `better` or `best`. The default is `best`. These values express a desired quality/speed tradeoff. They are translated into an algorithm-specific method that depends on the capabilities (CPU, GPU) of the underlying platform. It is possible for all three methods to be mapped to the same algorithm on a given platform.
+
+Returns `NativeImage` - The resized image.
+
+If only the `height` or the `width` are specified then the current aspect ratio will be preserved in the resized image.
+
+#### `image.getAspectRatio()`
+
+Returns `Float` - The image's aspect ratio.
+
+#### `image.addRepresentation(options)`
+
+* `options` Object * `scaleFactor` Double - The scale factor to add the image representation for. * `width` Integer (optional) - Defaults to 0. Required if a bitmap buffer is specified as `buffer`. * `height` Integer (optional) - Defaults to 0. Required if a bitmap buffer is specified as `buffer`. * `buffer` Buffer (optional) - The buffer containing the raw image data. * `dataURL` String (optional) - The data URL containing either a base 64 encoded PNG or JPEG image.
+
+Add an image representation for a specific scale factor. This can be used to explicitly add different scale factor representations to an image. This can be called on empty images.

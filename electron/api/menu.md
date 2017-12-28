@@ -1,103 +1,102 @@
-# 类：Menu （菜单）
+## Class: Menu
 
-> 创建原生的应用菜单和上下文菜单。
+> 创建原生应用菜单和上下文菜单。
 
-进程： [Main（主进程）](../glossary.md#main-process)
+线程：[主线程](../glossary.md#main-process)
 
 ### `new Menu()`
 
-创建一个新的菜单。
+创建新菜单。
 
 ### 静态方法
 
-`Menu` 类有如下静态方法：
+menu类有以下静态方法：
 
 #### `Menu.setApplicationMenu(menu)`
 
 * `menu` Menu
 
-在 macOS 上设置 `menu` 为应用菜单。在 windows 和 linux中， `menu`设置的是为每个窗口的顶部菜单。
+当在MacOS、Windows、Linux中使用`menu`设置程序菜单时，会设置在各个程序窗体的顶层。
 
-设置为 `null` 时，在 Windows 和 Linux 上，将会删除菜单条，但在 macOS 系统中无效。
+在windows和Linux系统中，使用`null`参数将会移除菜单栏, 但在MacOS系统中则不会有任何效果；
 
-**注意：** 这个API必须在 `app` 模块的 `ready` 事件后调用。
+注意：这个**API**调用要在程序的`ready`事件模块之后；
 
 #### `Menu.getApplicationMenu()`
 
-返回 `Menu` - 如果设置了菜单的话，就会返回应用程序菜单，如果没有设置，就会返回 `null` 。
+如果有设置, 则返回 ` Menu `-设置的应用程序菜单， 反之，则返回 ` null `。
 
-**注意：** 返回的`Menu`实例，并不支持动态的增删菜单项目。但是[实例属性](#instance-properties)可以被动态修改。
+** 注意: **返回的 ` menu ` 实例不支持动态添加或删除菜单项。 但仍然可以动态修改 [ 实例属性 ](#instance-properties)。
 
-#### `Menu.sendActionToFirstResponder(action)` _macOS_
+#### `Menu.sendActionToFirstResponder(action)` *macOS*
 
 * `action` String
 
-发送 `action` 给应用的第一个响应者，这个用来模仿macOS菜单的默认行为。通常你只需要使用 [`MenuItem`](menu-item.md) 的[`role`](menu-item.md#roles)属性。
+将 ` action ` 发送到应用程序的第一个响应方。 这用于模拟默认的 macOS 菜单行为。 通常, 您只用到 [` MenuItem `](menu-item.md) 的 [` role `](menu-item.md#roles) 属性。
 
-点击查看更多 macOS 的原生 action信息： [macOS Cocoa 事件处理向导](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/EventOverview/EventArchitecture/EventArchitecture.html#//apple_ref/doc/uid/10000060i-CH3-SW7) .
+有关 macOS 的本地操作的详细信息, 请参阅 [ macOS Cocoa Event Handling Guide ](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/EventOverview/EventArchitecture/EventArchitecture.html#//apple_ref/doc/uid/10000060i-CH3-SW7)。
 
 #### `Menu.buildFromTemplate(template)`
 
 * `template` MenuItemConstructorOptions[]
 
-返回 `Menu`
+返回 ` Menu `
 
-一般来说，`template` 只是用于创建 [MenuItem](menu-item.md) 的`options`数组，使用方式如上所示。
+通常, ` template ` 只是 ` option ` 的一选项, 用于构造 [ MenuItem ](menu-item.md)。可以在上面引用该用法。
 
-你也可以向 `template` 元素添加其它字段，他们会变成已有菜单项的属性。
+还可以将其他字段附加到 ` template ` 的元素中, 它们将成为构造的菜单项的属性。
 
 ### 实例方法
 
-`menu` 对象有如下实例方法
+` menu ` 对象具有以下实例方法:
 
 #### `menu.popup([browserWindow, options])`
 
-* `browserWindow` BrowserWindow (可选) - 默认为当前激活的窗口.
-* `options` Object (可选)
-  * `x` Number (可选) - 默认为当前光标所在的位置.
-  * `y` Number (**必须** 如果x设置了) - 默认为当前光标所在的位置.
-  * `async` Boolean (可选) - 设置为 `true` 时，调用这个方法会立即返回。设置为 `false` 时，当菜单被选择或者被关闭时才会返回。默认为 `false`。
-  * `positioningItem` Number (可选) _macOS_ - 指定坐标鼠标位置下面的菜单项的索引. 默认为
-    -1.
+* ` browserWindow `BrowserWindow (可选)-默认为焦点窗口。
+* `options` Object (可选) 
+  * ` x ` 数字 (可选)-默认值是当前鼠标光标的位置。如果声明了 ` y `, 则必须声明。
+  * ` y ` 数字 (可选)-默认值是当前鼠标光标的位置。如果声明了 ` x `, 则必须声明。
+  * `async` Boolean (optional) - Set to `true` to have this method return immediately called, `false` to return after the menu has been selected or closed. 默认值为 `false`.
+  * ` positioningItem `数字 (可选) * macOS *-要在指定坐标下的鼠标光标下定位的菜单项的索引。默认值为-1。
 
-在 `browserWindow` 中弹出菜单.
+将此菜单作为 ` browserWindow ` 中的上下文菜单弹出。
 
 #### `menu.closePopup([browserWindow])`
 
-* `browserWindow` BrowserWindow (可选) - 默认为当前激活的窗口.
+* ` browserWindow `BrowserWindow (可选)-默认为焦点窗口。
 
-在 `browserWindow` 关闭菜单.
+关闭 ` browserWindow ` 中的上下文菜单。
 
 #### `menu.append(menuItem)`
 
 * `menuItem` MenuItem
 
-添加菜单项。
+将 ` menuItem ` 追加到菜单。
 
 #### `menu.insert(pos, menuItem)`
 
 * `pos` Integer
 * `menuItem` MenuItem
 
-在指定位置添加菜单项。
+将 ` menuItem ` 插入菜单的 ` pos ` 位置。
 
 ### 实例属性
 
-`menu` 对象拥有以下属性：
+` menu ` 对象还具有以下属性:
 
-#### `menu.items()`
+#### `menu.items`
 
-获取一个菜单项数组。
+包含菜单项的 ` MenuItem [] ` 数组。
 
-## 例子
+每个 ` 菜单 ` 由多个 [` MenuItem `](menu-item.md) 组成, 每个 ` MenuItem `可以有子菜单。
 
-`Menu` 类只能在主进程中使用，但你也可以
-在渲染过程中通过 [`remote`](remote.md)  模块使用它。
+## 示例
 
-### 主进程
+` Menu ` 仅在主进程（ main process）中可用, 但您也可以在渲染进程（render process）中通过 [` remote `](remote.md) 模块使用它。
 
-在主进程中创建应用程序菜单的示例
-简单模板API：
+### Main process
+
+在主进程中创建程序菜单的简单API模版示例:
 
 ```javascript
 const {app, Menu} = require('electron')
@@ -191,10 +190,9 @@ const menu = Menu.buildFromTemplate(template)
 Menu.setApplicationMenu(menu)
 ```
 
-### 渲染进程
+### Render process
 
-以下是通过使用 [`remote`](remote.md) 模块在网页（渲染进程）中动态创建菜单的示例
-，并在用户点击右键时显示：
+下面是通过 [` remote `](remote.md) 模块在网页（render process）中动态创建右击菜单的示例:
 
 ```html
 <!-- index.html -->
@@ -214,48 +212,45 @@ window.addEventListener('contextmenu', (e) => {
 </script>
 ```
 
-## macOS Application 上的菜单的注意事项
+## MacOS中应用菜单注意事项
 
-相对于 windows 和 linux, macOS 上的应用菜单是完全不同的 style，这里是一些注意事项，来让你的菜单项更原生化。
+MacOS中的应用程序有着和windows，linux完全不同风格的菜单样式。这里有一些说明，可以让你的程序菜单看起来更贴合原生系统。
 
 ### 标准菜单
 
-在 macOS 上，有很多系统定义的标准菜单，例如 `Services` and
-`Windows` 菜单.为了让你的应用更标准化，你可以为你的菜单的 `role` 设置值，然后 Electron 将会识别他们并且让你的菜单更标准：
+在MacOS有一些系统自定的标准菜单，像`Services`和`Windows`。 让你的菜单更像MacOS标准菜单，只需设置菜单`role`值为如下示之一，Electron便会自动认出并设置成标准菜单，：
 
 * `window`
 * `help`
 * `services`
 
-### 标准菜单项行为
+### 标准菜单项操作
 
-macOS 为一些菜单项提供了标准的行为方法，例如 `About xxx`，
-`Hide xxx`,和 `Hide Others`. 为了让你的菜单项的行为更标准化，你应该为菜单项设置 `role` 属性。
+macOS 已经为某些菜单项提供了标准操作, 如 ` about xxx `、` Hide xxx ` 和 ` Hide Others `。 若要将菜单项的操作设置为标准操作, 应设置菜单项的 `  role` 属性。
 
-### 主菜单名
+### 主菜单的名称
 
-在 macOS ，无论你设置的什么标签，应用菜单的第一个菜单项的标签始终未你的应用名字。想要改变它的话，你必须通过修改应用绑定的 `Info.plist` 文件来修改应用名字，更多信息参考 [About Information
-Property List Files][AboutInformationPropertyListFiles] 。
+在 macOS 中应用程序菜单的第一个项目的标签总是你的应用程序的名字, 无论你设置什么标签。 如要更改它, 请修改应用程序包的 ` Info. plist ` 文件。 有关详细信息, 请参阅 [ About Information Property List Files ](https://developer.apple.com/library/ios/documentation/general/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html)。
 
-## 为制定浏览器窗口设置菜单 (*Linux* *Windows*)
+## 设置特定浏览器窗口的菜单 (* Linux * * Windows *)
 
-浏览器窗口的 [`setMenu` 方法][setMenu] 能够设置菜单为特定浏览器窗口的类型。
+浏览器窗口的 [ ` setMenu ` 方法 ](https://github.com/electron/electron/blob/master/docs/api/browser-window.md#winsetmenumenu-linux-windows) 可以设置特定浏览器窗口的菜单。
 
 ## 菜单项位置
 
-当通过 `Menu.buildFromTemplate` 创建菜单的时候，你可以使用 `position` and `id` 来放置菜单项。
+您在使用`Menu.buildFromTemplate  `生成菜单时，可以用` position ` 和 ` id ` 来控制定位菜单项的位置。
 
-`MenuItem` 的属性  `position` 格式为 `[placement]=[id]`，`placement` 取值为 `before`, `after`, 或 `endof` 和 `id`， `id` 是菜单已经存在的菜单项的唯一 ID：
+`MenuItem`中的`[placement]=[id]`属性，其中` placement`值可以是` before`、`after`、和 `endof`之一，`id`值则是现有菜单项的唯一ID
 
-* `before` - 在对应引用id菜单项之前插入。如果引用的菜单项不存在，则将其插在菜单末尾。
-* `after` - 在对应引用id菜单项之后插入。如果引用的菜单项不存在，则将其插在菜单末尾。
-* `endof` - 在逻辑上包含对应引用id菜单项的集合末尾插入。如果引用的菜单项不存在, 则将使用给定的id创建一个新的集合，并且这个菜单项将插入。
+* ` before `-在匹配的菜单项id 之前插入此项。如果匹配的项不存在, 则将在菜单的末尾插入该项。
+* ` after `-在匹配菜单项id 之后插入此项。如果匹配的项不存在, 则将在菜单的末尾插入该项。
+* ` endof `-在匹配的菜单项id 的逻辑组的末尾插入此项 (由分隔符项创建组)。 如果匹配的项不存在, 则使用给定 id 创建新的分隔符组, 并在该分隔符之后插入此项。
 
-当一个菜档项插入成功了，所有的没有插入的菜单项将一个接一个地在后面插入。所以如果你想在同一个位置插入一组菜单项，只需要为这组菜单项的第一个指定位置。
+当在菜单项中有一项有位置信息, 其后面所有未定位的项将紧跟其后, 直到后面出现新的菜单项有的位置。 因此, 如果要在同一位置放置一组菜单项, 则只需指定第一项的位置信息。
 
-### 例子
+### 示例
 
-模板:
+Template:
 
 ```javascript
 [
@@ -267,17 +262,16 @@ Property List Files][AboutInformationPropertyListFiles] 。
 ]
 ```
 
-菜单:
+Menu:
 
-```
-- 1
-- 2
-- 3
-- 4
-- 5
-```
+    <br />- 1
+    - 2
+    - 3
+    - 4
+    - 5
+    
 
-模板:
+Template:
 
 ```javascript
 [
@@ -290,18 +284,13 @@ Property List Files][AboutInformationPropertyListFiles] 。
 ]
 ```
 
-菜单:
+Menu:
 
-```
-- ---
-- a
-- b
-- c
-- ---
-- 1
-- 2
-- 3
-```
-
-[AboutInformationPropertyListFiles]: https://developer.apple.com/library/ios/documentation/general/Reference/InfoPlistKeyReference/Articles/AboutInformationPropertyListFiles.html
-[setMenu]: https://github.com/electron/electron/blob/master/docs/api/browser-window.md#winsetmenumenu-linux-windows
+    <br />- ---
+    - a
+    - b
+    - c
+    - ---
+    - 1
+    - 2
+    - 3

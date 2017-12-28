@@ -1,40 +1,40 @@
-# 菜单项
+## Class: MenuItem
 
-## 类：菜单项
+> Add items to native application menus and context menus.
 
-> 向原生的应用菜单和 context 菜单添加菜单项。
+线程：[主线程](../glossary.md#main-process)
 
-进程： [Main](../glossary.md#main-process)
-
-查看 [`Menu`](menu.md) 的示。
+有关示例, 请参见 [` Menu `](menu.md)。
 
 ### `new MenuItem(options)`
 
-* `options` Object
-  * `click` Function (可选) - 当菜单项被点击的时候，使用 `click(menuItem,browserWindow)` 调用。
+* `options` Object 
+  * `click` Function (optional) - Will be called with `click(menuItem, browserWindow, event)` when the menu item is clicked. 
     * `menuItem` MenuItem
     * `browserWindow` BrowserWindow
     * `event` Event
-  * `role` String (可选) - 定义菜单项的行为，在指定 `click` 属性时将会被忽略。参见 [roles](#roles).
-  * `type` String (可选) - 取值 `normal`, `separator`, `submenu`, `checkbox` 或 `radio`。
-  * `label` String - (可选)
-  * `sublabel` String - (可选)
-  * `accelerator` [Accelerator](accelerator.md) (可选)
-  * `icon` ([NativeImage](native-image.md) | String) (可选)
-  * `enabled` Boolean (可选) - 如果为 false，菜单项将显示为灰色不可点击。
-  * `visible` Boolean (可选) - 如果为 false，菜单项将完全隐藏。
-  * `checked` Boolean (可选) - 只为 `checkbox` 或 `radio` 类型的菜单项。
-  * `submenu` (MenuItemConstructorOptions[] | Menu) (可选) - 应当作为 `submenu` 菜单项的特定类型，当它作为 `type: 'submenu'` 菜单项的特定类型时可以忽略。如果它的值不是 `Menu`，将自动转为 `Menu.buildFromTemplate`。
-  * `id` String (可选) - 菜单的唯一标识。如果被定义使用，它将被用作这个菜单项的参考位置属性。
-  * `position` String (可选) - 定义菜单的具体指定位置信息。
+  * `role` String (optional) - Define the action of the menu item, when specified the `click` property will be ignored. See [roles](#roles).
+  * `type` String (optional) - Can be `normal`, `separator`, `submenu`, `checkbox` or `radio`.
+  * `label` String - (optional)
+  * `sublabel` String - (optional)
+  * `accelerator` [Accelerator](accelerator.md) (optional)
+  * `icon` ([NativeImage](native-image.md) | String) (optional)
+  * `enabled` Boolean (optional) - If false, the menu item will be greyed out and unclickable.
+  * `visible` Boolean (optional) - If false, the menu item will be entirely hidden.
+  * `checked` Boolean (optional) - Should only be specified for `checkbox` or `radio` type menu items.
+  * `submenu` (MenuItemConstructorOptions[] | Menu) (optional) - Should be specified for `submenu` type menu items. If `submenu` is specified, the `type: 'submenu'` can be omitted. If the value is not a `Menu` then it will be automatically converted to one using `Menu.buildFromTemplate`.
+  * `id` String (optional) - Unique within a single menu. If defined then it can be used as a reference to this item by the position attribute.
+  * `position` String (optional) - This field allows fine-grained definition of the specific location within a given menu.
 
 ### Roles
-Roles 允许菜单项有预定义的行为。最好为每个菜单项指定一个行为，而不是自己实现一个 `click` 函数中的行为。内置的 `role` 行为将提供最好的原生体验。
 
-当使用 `role` 时，`label` 和 `accelerator` 的值是可选的，会针对每个平台设置默认值。
+可以通过角色来为menu添加预定义行为。
 
+It is best to specify `role` for any menu item that matches a standard role, rather than trying to manually implement the behavior in a `click` function. The built-in `role` behavior will give the best native experience.
 
-`role`属性值可以为：
+The `label` and `accelerator` values are optional when using a `role` and will default to appropriate values for each platform.
+
+The `role` property can have following values:
 
 * `undo`
 * `redo`
@@ -44,63 +44,61 @@ Roles 允许菜单项有预定义的行为。最好为每个菜单项指定一�
 * `pasteandmatchstyle`
 * `selectall`
 * `delete`
-* `minimize` - 最小化当前窗口
-* `close` - 关闭当前窗口
-* `quit`- 退出应用程序
-* `reload` - 正常重新加载当前窗口
-* `forcereload` - 忽略缓存并重新加载当前窗口
-* `toggledevtools` - 在当前窗口中切换开发者工具
-* `togglefullscreen`- 在当前窗口中切换全屏模式
-* `resetzoom` - 将对焦页面的缩放级别重置为原始大小
-* `zoomin` - 将聚焦页面缩小10％
-* `zoomout` - 将聚焦页面放大10％
-* `editMenu` - 完整的默认 "Edit" 编辑菜单(拷贝，黏贴，等)
-* `windowMenu` - 完整的默认 "Window" 窗口菜单(最小化，关闭，等)
+* `minimize` - Minimize current window
+* `close` - Close current window
+* `quit`- Quit the application
+* `reload` - Reload the current window
+* `forcereload` - Reload the current window ignoring the cache.
+* `toggledevtools` - Toggle developer tools in the current window
+* `togglefullscreen`- Toggle full screen mode on the current window
+* `resetzoom` - Reset the focused page's zoom level to the original size
+* `zoomin` - Zoom in the focused page by 10%
+* `zoomout` - Zoom out the focused page by 10%
+* `editMenu` - Whole default "Edit" menu (Undo, Copy, etc.)
+* `windowMenu` - Whole default "Window" menu (Minimize, Close, etc.)
 
-在 macOS 上，`role` 还可以有以下值：
+The following additional roles are available on macOS:
 
-* `about` - 匹配 `orderFrontStandardAboutPanel` 行为
-* `hide` - 匹配 `hide` 行为
-* `hideothers` - 匹配 `hideOtherApplications` 行为
-* `unhide` - 匹配 `unhideAllApplications` 行为
-* `startspeaking` - 匹配 `startSpeaking` 行为
-* `stopspeaking` - 匹配 `stopSpeaking` 行为
-* `front` - 匹配 `arrangeInFront` 行为
-* `zoom` - 匹配 `performZoom` 行为
-* `window` - "Window" 菜单项
-* `help` - "Help" 菜单项
-* `services` - "Services" 菜单项
+* `about` - Map to the `orderFrontStandardAboutPanel` action
+* `hide` - Map to the `hide` action
+* `hideothers` - Map to the `hideOtherApplications` action
+* `unhide` - Map to the `unhideAllApplications` action
+* `startspeaking` - Map to the `startSpeaking` action
+* `stopspeaking` - Map to the `stopSpeaking` action
+* `front` - Map to the `arrangeInFront` action
+* `zoom` - Map to the `performZoom` action
+* `window` - The submenu is a "Window" menu
+* `help` - The submenu is a "Help" menu
+* `services` - The submenu is a "Services" menu
 
-当在 macOS 上指定 `role' 时，`label` 和 `accelerator` 是影响MenuItem的唯一的选项
-所有其他选项将被忽略。
+When specifying a `role` on macOS, `label` and `accelerator` are the only options that will affect the menu item. All other options will be ignored.
 
 ### 实例属性
 
-`MenuItem` 对象拥有以下属性：
+以下为 ` MenuItem ` 实例的可用属性:
 
 #### `menuItem.enabled`
 
-一个布尔值表示是否启用该项，此属性可以动态改变。
+A `Boolean` indicating whether the item is enabled, this property can be dynamically changed.
 
 #### `menuItem.visible`
 
-一个布尔值表示是否可见，此属性可以动态改变。
+A `Boolean` indicating whether the item is visible, this property can be dynamically changed.
 
 #### `menuItem.checked`
 
-一个布尔值表示是否选中该项，此属性可以动态改变。
+A `Boolean` indicating whether the item is checked, this property can be dynamically changed.
 
-`checkbox` 菜单项将在选中和未选中切换 `checked` 属性。
+A `checkbox` menu item will toggle the `checked` property on and off when selected.
 
-`radio` 菜单项将在选中切换 `checked` 属性，并且
-将关闭同一菜单中所有相邻项目的属性。
+A `radio` menu item will turn on its `checked` property when clicked, and will turn off that property for all adjacent items in the same menu.
 
-您可以为其他行为添加一个 `click` 函数。
+You can add a `click` function for additional behavior.
 
 #### `menuItem.label`
 
-一个表示菜单项可见标签的字符串
+A `String` representing the menu items visible label
 
 #### `menuItem.click`
 
-当 MenuItem 接收到点击事件时触发的函数
+A `Function` that is fired when the MenuItem receives a click event

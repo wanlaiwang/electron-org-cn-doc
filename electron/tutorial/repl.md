@@ -5,15 +5,16 @@
 在这里 `repl` 模块提供了一个 REPL 的实现, 可以这样使用:
 
 * 如果你的 `electron` 或 `electron-prebuilt` 已经安装为本地项目依赖项:
+    
+    ```sh
+./node_modules/.bin/electron --interactive
+```
 
-  ```sh
-  ./node_modules/.bin/electron --interactive
-  ```
 * 如果你的 `electron` 或 `electron-prebuilt` 已经为全局方式安装:
-
-  ```sh
-  electron --interactive
-  ```
+    
+    ```sh
+electron --interactive
+```
 
 这里只会为主进程创建一个REPL。 您可以使用 Dev Tools 的“控制台”选项卡来为渲染器进程获取一个REPL。
 

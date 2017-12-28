@@ -1,12 +1,12 @@
 # powerMonitor
 
-> 监视电源状态更改。
+> Monitor power state changes.
 
-进程： [Main](../glossary.md#main-process)
+线程：[主线程](../glossary.md#main-process)
 
-在 `app` 模块的 `ready` 事件触发之后就不能使用这个模块了。
+You cannot require or use this module until the `ready` event of the `app` module is emitted.
 
-例如:
+例如：
 
 ```javascript
 const electron = require('electron')
@@ -21,20 +21,20 @@ app.on('ready', () => {
 
 ## 事件
 
-`powerMonitor` 模块可以触发下列事件：
+The `powerMonitor` module emits the following events:
 
 ### Event: 'suspend'
 
-在系统挂起的时候触发。
+Emitted when the system is suspending.
 
 ### Event: 'resume'
 
-在系统恢复继续工作的时候触发。
+Emitted when system is resuming.
 
-### Event: 'on-ac'
+### Event: 'on-ac' *Windows*
 
-在系统使用交流电的时候触发。
+Emitted when the system changes to AC power.
 
-### Event: 'on-battery'
+### Event: 'on-battery' *Windows*
 
-在系统使用电池电源的时候触发。
+Emitted when system changes to battery power.

@@ -1,12 +1,12 @@
 # shell
-> 使用系统默认应用管理文件和 URL .
 
-进程: [Main](../glossary.md#main-process), [Renderer](../glossary.md#renderer-process)
+> Manage files and URLs using their default applications.
 
-`shell` 模块提供了集成其他桌面客户端的关联功能.
+进程： [Main](../glossary.md#main-process), [renderer](../glossary.md#renderer-process) 进程
 
+The `shell` module provides functions related to desktop integration.
 
-在用户默认浏览器中打开URL的示例:
+An example of opening a URL in the user's default browser:
 
 ```javascript
 const {shell} = require('electron')
@@ -16,66 +16,67 @@ shell.openExternal('https://github.com')
 
 ## 方法
 
-`shell` 模块包含以下函数:
+The `shell` module has the following methods:
 
 ### `shell.showItemInFolder(fullPath)`
 
 * `fullPath` String
 
-Returns `Boolean` - 
-是否成功打开文件所在文件夹,一般情况下还会选中它.
+Returns `Boolean` - Whether the item was successfully shown
+
+Show the given file in a file manager. If possible, select the file.
 
 ### `shell.openItem(fullPath)`
 
 * `fullPath` String
 
-Returns `Boolean` - 是否成功的以默认打开方式打开文件.
+Returns `Boolean` - Whether the item was successfully opened.
 
+Open the given file in the desktop's default manner.
 
-### `shell.openExternal(url)`
+### `shell.openExternal(url[, options, callback])`
 
 * `url` String
-* `options` Object (可选) _macOS_
-  * `activate` Boolean - `true` 让打开的应用在前面显示，默认为 `true`.
-* `callback` Function (可选) - 如果指定将执行异步打开. _macOS_
+* `options` Object (可选) *macOS* 
+  * `activate` Boolean - `true` to bring the opened application to the foreground. The default is `true`.
+* `callback` Function (optional) - If specified will perform the open asynchronously. *macOS* 
   * `error` Error
 
-Returns `Boolean` - 应用程序是否打开URL.如果指定了 callback 回调方法, 则返回 true.
+Returns `Boolean` - Whether an application was available to open the URL. If callback is specified, always returns true.
 
-以系统默认设置打开外部协议.(例如,mailto: URLs 会打开用户默认的邮件客户端)
-
+Open the given external protocol URL in the desktop's default manner. (For example, mailto: URLs in the user's default mail agent).
 
 ### `shell.moveItemToTrash(fullPath)`
 
 * `fullPath` String
 
-Returns `Boolean` - 文件是否成功移动到垃圾桶
+Returns `Boolean` - Whether the item was successfully moved to the trash
 
-删除指定路径文件,并返回此操作的状态值(boolean类型).
+Move the given file to trash and returns a boolean status for the operation.
 
 ### `shell.beep()`
 
-播放 beep 声音.
+Play the beep sound.
 
-### `shell.writeShortcutLink(shortcutPath[, operation], options)` _Windows_
+### `shell.writeShortcutLink(shortcutPath[, operation], options)` *Windows*
 
 * `shortcutPath` String
-* `operation` String (可选) - 默认为 `create`, 可以为下列的值:
-  * `create` - 创建一个新的快捷方式，如果存在的话会覆盖.
-  * `update` - 仅在现有快捷方式上更新指定属性.
-  * `replace` - 覆盖现有的快捷方式，如果快捷方式不存在则会失败.
+* `operation` String (optional) - Default is `create`, can be one of following: 
+  * `create` - Creates a new shortcut, overwriting if necessary.
+  * `update` - Updates specified properties only on an existing shortcut.
+  * `replace` - Overwrites an existing shortcut, fails if the shortcut doesn't exist.
 * `options` [ShortcutDetails](structures/shortcut-details.md)
 
-Returns `Boolean` - 快捷方式是否成功创建
+Returns `Boolean` - Whether the shortcut was created successfully
 
-为 `shortcutPath` 创建或更新快捷链接.
+Creates or updates a shortcut link at `shortcutPath`.
 
-### `shell.readShortcutLink(shortcutPath)` _Windows_
+### `shell.readShortcutLink(shortcutPath)` *Windows*
 
 * `shortcutPath` String
 
 Returns [`ShortcutDetails`](structures/shortcut-details.md)
 
-读取 `shortcutPath` 的快捷连接的信息.
+Resolves the shortcut link at `shortcutPath`.
 
-发生错误时，会抛出异常信息.
+An exception will be thrown when any error happens.

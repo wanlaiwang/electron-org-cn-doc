@@ -1,6 +1,6 @@
 # ProcessMetric Object
 
-*   `pid` Integer - Process id of the process.
-*   `type` String - Process type (Browser or Tab or GPU etc).
-*   `memory` [MemoryInfo]({{site.baseurl}}/docs/api/structures/memory-info) - Memory information for the process.
-*   `cpu` [CPUUsage]({{site.baseurl}}/docs/api/structures/cpu-usage) - CPU usage of the process.
+* `pid` Integer - 进程ID
+* `type` String - 进程类型(例如浏览器、标签、GPU等等)。
+* `memory` [MemoryInfo](memory-info.md) - 进程的内存信息。
+* `cpu` [CPUUsage](cpu-usage.md) - CPU使用率

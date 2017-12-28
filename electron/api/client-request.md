@@ -1,28 +1,28 @@
-## Class: ClientRequest
+## 类: ClientRequest
 
-> Make HTTP/HTTPS requests.
+> 发起HTTP/HTTPS请求.
 
-Process: [Main]({{site.baseurl}}/docs/glossary#main-process)
+线程：[主线程](../glossary.md#main-process)
 
-`ClientRequest` implements the [Writable Stream](https://nodejs.org/api/stream.html#stream_writable_streams) interface and is therefore an [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter).
+`ClientRequest`实现了[Writable Stream](https://nodejs.org/api/stream.html#stream_writable_streams)接口, 因此是一个[EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter)类型.
 
 ### `new ClientRequest(options)`
 
-*   `options` (Object &#124; String) - If `options` is a String, it is interpreted as the request URL. If it is an object, it is expected to fully specify an HTTP request via the following properties:
-    *   `method` String (optional) - The HTTP request method. Defaults to the GET method.
-    *   `url` String (optional) - The request URL. Must be provided in the absolute form with the protocol scheme specified as http or https.
-    *   `session` Object (optional) - The [`Session`]({{site.baseurl}}/docs/api/session) instance with which the request is associated.
-    *   `partition` String (optional) - The name of the [`partition`]({{site.baseurl}}/docs/api/session) with which the request is associated. Defaults to the empty string. The `session` option prevails on `partition`. Thus if a `session` is explicitly specified, `partition` is ignored.
-    *   `protocol` String (optional) - The protocol scheme in the form 'scheme:'. Currently supported values are 'http:' or 'https:'. Defaults to 'http:'.
-    *   `host` String (optional) - The server host provided as a concatenation of the hostname and the port number 'hostname:port'
-    *   `hostname` String (optional) - The server host name.
-    *   `port` Integer (optional) - The server's listening port number.
-    *   `path` String (optional) - The path part of the request URL.
-    *   `redirect` String (optional) - The redirect mode for this request. Should be one of `follow`, `error` or `manual`. Defaults to `follow`. When mode is `error`, any redirection will be aborted. When mode is `manual` the redirection will be deferred until [`request.followRedirect`](#requestfollowRedirect) is invoked. Listen for the [`redirect`](#event-redirect) event in this mode to get more details about the redirect request.
+* `options` (Object | String) -如果 `options` 是一个String类型, 它被解释为请求的URL. 如果它是一个Object类型, 那么它可以通过以下属性指定一个HTTP请求: 
+  * `method` String (可选) - HTTP请求方法. 默认为GET方法.
+  * `url` String (可选) - 请求的URL. 必须在指定了http或https的协议方案的独立表单中提供.
+  * `session` Object (可选) - 与请求相关联的[`Session`](session.md)实例.
+  * `partition` String (可选) - 与请求相关联的[`partition`](session.md)名称. 默认为空字符串. `session`选项优先于`partition`选项. 因此, 如果`session`是显式指定的, 则`partition`将被忽略.
+  * `protocol` String (可选) - 在"scheme:"表单中的协议方案. 目前支持的值为'http:' 或者'https:'. 默认为'http:'.
+  * `host` String (可选) - 作为连接提供的服务器主机,主机名和端口号'hostname:port'
+  * `hostname` String (可选) - 服务器主机名.
+  * `port` Integer (可选) - 服务器侦听的端口号.
+  * `path` String (可选) - 请求URL的路径部分.
+  * `redirect` String (可选) - 请求的重定向模式. 可选值为 `follow`, `error` 或 `manual`. 默认值为 `follow`. 当模式为`error`时, 重定向将被终止. 当模式为 `manual`时，表示延迟重定向直到调用了 [`request.followRedirect`](#requestfollowRedirect)。 在此模式中侦听 [`redirect`](#event-redirect)事件，以获得关于重定向请求的更多细节。
 
-`options` properties such as `protocol`, `host`, `hostname`, `port` and `path` strictly follow the Node.js model as described in the [URL](https://nodejs.org/api/url.html) module.
+`options` 属性，如 `protocol`, `host`, `hostname`, `port` 和 `path`，在 [URL](https://nodejs.org/api/url.html) 模块中会严格遵循 Node.js 的模式
 
-For instance, we could have created the same request to 'github.com' as follows:
+例如,我们可以创建与github.com相同的请求如下:
 
 ```JavaScript
 const request = net.request({
@@ -34,34 +34,34 @@ const request = net.request({
 })
 ```
 
-### Instance Events
+### 实例事件
 
 #### Event: 'response'
 
-Returns:
+返回:
 
-*   `response` IncomingMessage - An object representing the HTTP response message.
+* `response` 收到的消息 - 表示HTTP响应消息的对象。
 
-#### Event: 'login'
+#### 事件: "login"
 
-Returns:
+返回:
 
-*   `authInfo` Object
-    *   `isProxy` Boolean
-    *   `scheme` String
-    *   `host` String
-    *   `port` Integer
-    *   `realm` String
-*   `callback` Function
-    *   `username` String
-    *   `password` String
+* `authInfo` Object 
+  * `isProxy` Boolean
+  * `scheme` String
+  * `host` String
+  * `port` Integer
+  * `realm` String
+* `callback` Function 
+  * `username` String
+  * `password` String
 
-Emitted when an authenticating proxy is asking for user credentials.
+当身份验证代理请求用户认证时触发
 
-The `callback` function is expected to be called back with user credentials:
+用户证书会调用 `callback`方法:
 
-*   `username` String
-*   `password` String
+* `username` String
+* `password` String
 
 ```JavaScript
 request.on('login', (authInfo, callback) => {
@@ -69,7 +69,7 @@ request.on('login', (authInfo, callback) => {
 })
 ```
 
-Providing empty credentials will cancel the request and report an authentication error on the response object:
+提供空的凭证将取消请求，并在响应对象上报告一个身份验证错误:
 
 ```JavaScript
 request.on('response', (response) => {
@@ -85,36 +85,36 @@ request.on('login', (authInfo, callback) => {
 
 #### Event: 'finish'
 
-Emitted just after the last chunk of the `request`'s data has been written into the `request` object.
+在 `request` 最终的 chunk 数据后写入 `request` 后触发
 
 #### Event: 'abort'
 
-Emitted when the `request` is aborted. The `abort` event will not be fired if the `request` is already closed.
+当 `request`请求被中止时发出。如果`request` 请求已经关闭， `abort`中止事件将不会被触发。
 
 #### Event: 'error'
 
-Returns:
+返回:
 
-*   `error` Error - an error object providing some information about the failure.
+* `error` Error -提供失败信息的错误对象。
 
-Emitted when the `net` module fails to issue a network request. Typically when the `request` object emits an `error` event, a `close` event will subsequently follow and no response object will be provided.
+当 `net`网络模块没有发出网络请求时会触发。 通常情况下，当 `request`请求对象发出一个 `error`错误事件时，一个 `close`关闭事件会随之发生，并且不会提供响应对象。
 
-#### Event: 'close'
+#### 事件：close
 
-Emitted as the last event in the HTTP request-response transaction. The `close` event indicates that no more events will be emitted on either the `request` or `response` objects.
+作为HTTP 的 request-response 中的最后一个事件发出。 `close`事件表明，在`request`或`response` 对象中不会发出更多的事件。
 
 #### Event: 'redirect'
 
-Returns:
+返回:
 
-*   `statusCode` Integer
-*   `method` String
-*   `redirectUrl` String
-*   `responseHeaders` Object
+* `statusCode` Integer
+* `method` String
+* `redirectUrl` String
+* `responseHeaders` Object
 
 Emitted when there is redirection and the mode is `manual`. Calling [`request.followRedirect`](#requestfollowRedirect) will continue with the redirection.
 
-### Instance Properties
+### 实例属性
 
 #### `request.chunkedEncoding`
 
@@ -122,32 +122,32 @@ A `Boolean` specifying whether the request will use HTTP chunked transfer encodi
 
 Using chunked encoding is strongly recommended if you need to send a large request body as data will be streamed in small chunks instead of being internally buffered inside Electron process memory.
 
-### Instance Methods
+### 实例方法
 
 #### `request.setHeader(name, value)`
 
-*   `name` String - An extra HTTP header name.
-*   `value` Object - An extra HTTP header value.
+* `name` String - An extra HTTP header name.
+* `value` Object - An extra HTTP header value.
 
 Adds an extra HTTP header. The header name will issued as it is without lowercasing. It can be called only before first write. Calling this method after the first write will throw an error. If the passed value is not a `String`, its `toString()` method will be called to obtain the final value.
 
 #### `request.getHeader(name)`
 
-*   `name` String - Specify an extra header name.
+* `name` String - Specify an extra header name.
 
 Returns `Object` - The value of a previously set extra header name.
 
 #### `request.removeHeader(name)`
 
-*   `name` String - Specify an extra header name.
+* `name` String - Specify an extra header name.
 
 Removes a previously set extra header name. This method can be called only before first write. Trying to call it after the first write will throw an error.
 
 #### `request.write(chunk[, encoding][, callback])`
 
-*   `chunk` (String &#124; Buffer) - A chunk of the request body's data. If it is a string, it is converted into a Buffer using the specified encoding.
-*   `encoding` String (optional) - Used to convert string chunks into Buffer objects. Defaults to 'utf-8'.
-*   `callback` Function (optional) - Called after the write operation ends.
+* `chunk` (String | Buffer) - A chunk of the request body's data. If it is a string, it is converted into a Buffer using the specified encoding.
+* `encoding` String (optional) - Used to convert string chunks into Buffer objects. Defaults to 'utf-8'.
+* `callback` Function (optional) - Called after the write operation ends.
 
 `callback` is essentially a dummy function introduced in the purpose of keeping similarity with the Node.js API. It is called asynchronously in the next tick after `chunk` content have been delivered to the Chromium networking layer. Contrary to the Node.js implementation, it is not guaranteed that `chunk` content have been flushed on the wire before `callback` is called.
 
@@ -155,9 +155,9 @@ Adds a chunk of data to the request body. The first write operation may cause th
 
 #### `request.end([chunk][, encoding][, callback])`
 
-*   `chunk` (String &#124; Buffer) (optional)
-*   `encoding` String (optional)
-*   `callback` Function (optional)
+* `chunk` (String | Buffer) (optional)
+* `encoding` String (optional)
+* `callback` Function (optional)
 
 Sends the last chunk of the request data. Subsequent write or end operations will not be allowed. The `finish` event is emitted just after the end operation.
 

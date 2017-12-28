@@ -1,8 +1,8 @@
-## Class: Debugger
+## 类: Debugger
 
 > An alternate transport for Chrome's remote debugging protocol.
 
-Process: [Main]({{site.baseurl}}/docs/glossary#main-process)
+线程：[主线程](../glossary.md#main-process)
 
 Chrome Developer Tools has a [special binding](https://developer.chrome.com/devtools/docs/debugger-protocol) available at JavaScript runtime that allows interacting with pages and instrumenting them.
 
@@ -31,17 +31,17 @@ win.webContents.debugger.on('message', (event, method, params) => {
 win.webContents.debugger.sendCommand('Network.enable')
 ```
 
-### Instance Methods
+### 实例方法
 
 #### `debugger.attach([protocolVersion])`
 
-*   `protocolVersion` String (optional) - Requested debugging protocol version.
+* `protocolVersion` String (optional) - 需要调试的协议的版本
 
-Attaches the debugger to the `webContents`.
+添加调试器到 `webContents` 。
 
 #### `debugger.isAttached()`
 
-Returns `Boolean` - Whether a debugger is attached to the `webContents`.
+Returns `Boolean` - 表示调试器是否成功添加到 `webContents` 。
 
 #### `debugger.detach()`
 
@@ -49,27 +49,27 @@ Detaches the debugger from the `webContents`.
 
 #### `debugger.sendCommand(method[, commandParams, callback])`
 
-*   `method` String - Method name, should be one of the methods defined by the remote debugging protocol.
-*   `commandParams` Object (optional) - JSON object with request parameters.
-*   `callback` Function (optional) - Response
-    *   `error` Object - Error message indicating the failure of the command.
-    *   `result` Any - Response defined by the 'returns' attribute of the command description in the remote debugging protocol.
+* `method` String - Method name, should be one of the methods defined by the remote debugging protocol.
+* `commandParams` Object (optional) - JSON object with request parameters.
+* `callback` Function (optional) - Response 
+  * `error` Object - Error message indicating the failure of the command.
+  * `result` Any - Response defined by the 'returns' attribute of the command description in the remote debugging protocol.
 
 Send given command to the debugging target.
 
-### Instance Events
+### 事件
 
 #### Event: 'detach'
 
-*   `event` Event
-*   `reason` String - Reason for detaching debugger.
+* `event` Event
+* `reason` String - Reason for detaching debugger.
 
 Emitted when debugging session is terminated. This happens either when `webContents` is closed or devtools is invoked for the attached `webContents`.
 
 #### Event: 'message'
 
-*   `event` Event
-*   `method` String - Method name.
-*   `params` Object - Event parameters defined by the 'parameters' attribute in the remote debugging protocol.
+* `event` Event
+* `method` String - Method name.
+* `params` Object - Event parameters defined by the 'parameters' attribute in the remote debugging protocol.
 
 Emitted whenever debugging target issues instrumentation event.

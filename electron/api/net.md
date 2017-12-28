@@ -1,22 +1,21 @@
 # net
 
-> 使用原生 Chromium 的 networking 库来解决 HTTP/HTTPS 请求问题。
+> Issue HTTP/HTTPS requests using Chromium's native networking library
 
-可使用的进程: [主进程](../tutorial/quick-start.md#main-process)
+线程：[主线程](../glossary.md#main-process)
 
-`net` 模块是一个客户端 API 用于解决 HTTP(S) 请求问题。它和 Node.js 中的 [HTTP](https://nodejs.org/api/http.html) 和 [HTTPS](https://nodejs.org/api/https.html) 模块比较相似，但是它使用了 Chromium 的原生 API 来替代 Node.js 的方案 ，相对而言更加适合 web 端的请求处理。
+The `net` module is a client-side API for issuing HTTP(S) requests. It is similar to the [HTTP](https://nodejs.org/api/http.html) and [HTTPS](https://nodejs.org/api/https.html) modules of Node.js but uses Chromium's native networking library instead of the Node.js implementation, offering better support for web proxies.
 
-以下是部分简要的原因来阐述为什么你需要考虑使用 `net` 来替代 Node.js 的原生模块：
+The following is a non-exhaustive list of why you may consider using the `net` module instead of the native Node.js modules:
 
-* 自动管理系统代理设置，支持 wpad 协议和 pac 代理配置文件。
-* 自动使用隧道通过 HTTPS 请求。
-* 支持 basic, digest, NTLM, Kerberos or
-  negotiate 等身份验证模式作为身份验证代理。
-* 支持 traffic monitoring proxies: 类似于 Fiddler 的代理用于监控和操作网络请求。
+* Automatic management of system proxy configuration, support of the wpad protocol and proxy pac configuration files.
+* Automatic tunneling of HTTPS requests.
+* Support for authenticating proxies using basic, digest, NTLM, Kerberos or negotiate authentication schemes.
+* Support for traffic monitoring proxies: Fiddler-like proxies used for access control and monitoring.
 
-`net` 模块的 API 在设计上特别的模仿了 Node.js 的 API 从而达到比较接近的体验。在 API 组件中包含了类，方法，属性还有事件等名称，这些都像是在使用 Node.js 的 API。
+The `net` module API has been specifically designed to mimic, as closely as possible, the familiar Node.js API. The API components including classes, methods, properties and event names are similar to those commonly used in Node.js.
 
-例如下面一个例子就快速展示了如何使用 `net` API ：
+For instance, the following example quickly shows how the `net` API might be used:
 
 ```javascript
 const {app} = require('electron')
@@ -37,18 +36,18 @@ app.on('ready', () => {
 })
 ```
 
-也就是说，它对于你使用过 Node.js 的 [HTTP](https://nodejs.org/api/http.html)/[HTTPS](https://nodejs.org/api/https.html) 模块来说是非常的相似的。
+By the way, it is almost identical to how you would normally use the [HTTP](https://nodejs.org/api/http.html)/[HTTPS](https://nodejs.org/api/https.html) modules of Node.js
 
-`net` API 只有在应用触发 `ready` 事件后才可以使用。如果在 `ready` 事件前尝试使用会抛出一个错误。
+The `net` API can be used only after the application emits the `ready` event. Trying to use the module before the `ready` event will throw an error.
 
 ## 方法
 
-`net` 模块拥有以下方法：
+The `net` module has the following methods:
 
 ### `net.request(options)`
 
-* `options` (Object | String) - `ClientRequest` 的构造参数。
+* `options` (Object | String) - The `ClientRequest` constructor options.
 
-返回 `ClientRequest`
+Returns [`ClientRequest`](./client-request.md)
 
-创建一个 [`ClientRequest`](./client-request.md) 使用提供的参数来作为构造器。`net.request` 方法会根据设置中的相应的协议方来处理处理安全和不受信任的 HTTP 请求。
+Creates a [`ClientRequest`](./client-request.md) instance using the provided `options` which are directly forwarded to the `ClientRequest` constructor. The `net.request` method would be used to issue both secure and insecure HTTP requests according to the specified protocol scheme in the `options` object.

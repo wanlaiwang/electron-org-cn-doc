@@ -1,19 +1,19 @@
-# NotificationAction Object
+# NotificationAction 对象
 
-*   `type` String - The type of action, can be `button`.
-*   `text` String - (optional) The label for the given action.
+* `type` 类型：String - 此类操作可以作为 `按钮`.
+* `text` 类型 String - 给定操作的标签（可选）。
 
-## Platform / Action Support
+## 平台 / 行为支持
 
-| Action Type | Platform Support | Usage of `text`                  | Default `text` | Limitations                              |
-| ----------- | ---------------- | -------------------------------- | -------------- | ---------------------------------------- |
-| `button`    | macOS            | Used as the label for the button | "Show"         | Maximum of one button, if multiple are provided only the last is used. This action is also incomptible with `hasReply` and will be ignored if `hasReply` is `true`. |
+| 行为类型     | 平台支持  | `text` 参数    | `text` 参数默认值 | 局限性                                                                                                 |
+| -------- | ----- | ------------ | ------------ | --------------------------------------------------------------------------------------------------- |
+| `button` | macOS | button 显示的内容 | "Show"       | 最多仅支持一个button, 如果设置了多个只有最后一个会被使用。也跟` hasReplay `不兼容，如果` hasReplay `被设置成了` true ` 那么这个button 行为将被忽略。 |
 
-### Button support on macOS
+### MacOS系统上的按钮支持
 
-In order for extra notification buttons to work on macOS your app must meet the following criteria.
+为了使额外的通知按钮在macOS上工作，您的应用程序必须符合以下标准。
 
-*   App is signed
-*   App has it's `NSUserNotificationAlertStyle` set to `alert` in the `info.plist`.
+* 应用程序已签名
+* 应用程序将`info.plist`变量中的`NSUserNotificationAlertStyle`属性值设置为`alert`.
 
-If either of these requirements are not met the button simply won't appear.
+任何一个条件不满足则按钮无法显示。

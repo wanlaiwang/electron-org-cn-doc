@@ -1,18 +1,17 @@
-# dialog
+# 对话框
 
-> 显示用于打开和保存文件，alert框等的原生的系统对话框
+> 显示用于打开和保存文件、警报等的本机系统对话框。
 
-进程: [Main](../glossary.md#main-process)
+线程：[主线程](../glossary.md#main-process)
 
-对话框例子，展示了选择文件和目录:
+显示用于选择多个文件和目录的对话框的示例:
 
 ```javascript
 const {dialog} = require('electron')
 console.log(dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}))
 ```
 
-对话框从 Electron 的主线程打开。如果要从渲染器进程使用对话框
-对象，记得使用 remote 访问它：
+这个对话框是从Electron的主线程上打开的。如果要使用渲染器进程中的对话框对象, 可以使用remote来获得:
 
 ```javascript
 const {dialog} = require('electron').remote
@@ -21,44 +20,34 @@ console.log(dialog)
 
 ## 方法
 
-`dialog` 模块有以下方法：
+` dialog ` 对象具有以下方法:
 
 ### `dialog.showOpenDialog([browserWindow, ]options[, callback])`
 
 * `browserWindow` BrowserWindow (可选)
-* `options` Object
-  * `title` String (可选)
-  * `defaultPath` String (可选)
-  * `buttonLabel` String (可选) - Custom label for the confirmation button, when
-    left empty the default label will be used.
+* `options` Object 
+  * `title` String (optional)
+  * `defaultPath` String (optional)
+  * `buttonLabel` String (optional) - Custom label for the confirmation button, when left empty the default label will be used.
   * `filters` [FileFilter[]](structures/file-filter.md) (optional)
-  * `properties` String[] (可选) - Contains which features the dialog should
-    use. The following values are supported:
+  * `属性` String[] (optional) - Contains which features the dialog should use. The following values are supported: 
     * `openFile` - Allow files to be selected.
     * `openDirectory` - Allow directories to be selected.
     * `multiSelections` - Allow multiple paths to be selected.
     * `showHiddenFiles` - Show hidden files in dialog.
-    * `createDirectory` _macOS_ - Allow creating new directories from dialog.
-    * `promptToCreate` _Windows_ - Prompt for creation if the file path entered
-      in the dialog does not exist. This does not actually create the file at
-      the path but allows non-existent paths to be returned that should be
-      created by the application.
-  * `normalizeAccessKeys` Boolean (可选) - Normalize the keyboard access keys
-    across platforms. Default is `false`. Enabling this assumes `&` is used in
-    the button labels for the placement of the keyboard shortcut access key
-    and labels will be converted so they work correctly on each platform, `&`
-    characters are removed on macOS, converted to `_` on Linux, and left
-    untouched on Windows. For example, a button label of `Vie&w` will be
-    converted to `Vie_w` on Linux and `View` on macOS and can be selected
-    via `Alt-W` on Windows and Linux.
-* `callback` Function (可选)
+    * `createDirectory` - Allow creating new directories from dialog. *macOS*
+    * `promptToCreate` - Prompt for creation if the file path entered in the dialog does not exist. This does not actually create the file at the path but allows non-existent paths to be returned that should be created by the application. *Windows*
+    * `noResolveAliases` - Disable the automatic alias (symlink) path resolution. Selected aliases will now return the alias path instead of their target path. *macOS*
+    * `treatPackageAsDirectory` - Treat packages, such as `.app` folders, as a directory instead of a file. *macOS*
+  * `message` String (optional) *macOS* - Message to display above input boxes.
+* `callback` Function (optional) 
   * `filePaths` String[] - An array of file paths chosen by the user
 
-成功使用这个方法的话，就返回一个可供用户选择的文件路径数组，失败返回 `undefined`。
+Returns `String[]`, an array of file paths chosen by the user, if the callback is provided it returns `undefined`.
 
-`browserWindow` 参数允许对话框将自身附加到父窗口，使其成为模态。
+The `browserWindow` argument allows the dialog to attach itself to a parent window, making it modal.
 
-`filters` 当需要限定用户的行为的时候，指定一个文件数组给用户展示或选择。例如：
+The `filters` specifies an array of file types that can be displayed or selected when you want to limit the user to a specific type. For example:
 
 ```javascript
 {
@@ -71,76 +60,88 @@ console.log(dialog)
 }
 ```
 
-`extensions` 数组应当只包含扩展名，不应该包含通配符或 '.' 号 （例如
-`'png'` 正确，但是 `'.png'` 和 `'*.png'` 不正确）。展示全部文件的话，使用
-`'*'` 通配符 （不支持其他通配符）。
+The `extensions` array should contain extensions without wildcards or dots (e.g. `'png'` is good but `'.png'` and `'*.png'` are bad). To show all files, use the `'*'` wildcard (no other wildcard is supported).
 
-如果 `callback` 被调用，将异步调用 API ，并且结果将用过  `callback(filenames)` 展示。
+If a `callback` is passed, the API call will be asynchronous and the result will be passed via `callback(filenames)`
 
-**注意:** 在 Windows 和 Linux ，一个打开的 dialog 不能既是文件选择框又是目录选择框, 所以如果在这些平台上设置 `properties` 的值为
-`['openFile', 'openDirectory']` ，将展示一个目录选择框。
+**Note:** On Windows and Linux an open dialog can not be both a file selector and a directory selector, so if you set `properties` to `['openFile', 'openDirectory']` on these platforms, a directory selector will be shown.
 
 ### `dialog.showSaveDialog([browserWindow, ]options[, callback])`
 
 * `browserWindow` BrowserWindow (可选)
-* `options` Object
-  * `title` String (可选)
-  * `defaultPath` String (可选)
-  * `buttonLabel` String (可选) - Custom label for the confirmation button, when
-    left empty the default label will be used.
+* `options` Object 
+  * `title` String (optional)
+  * `defaultPath` String (optional) - Absolute directory path, absolute file path, or file name to use by default.
+  * `buttonLabel` String (optional) - Custom label for the confirmation button, when left empty the default label will be used.
   * `filters` [FileFilter[]](structures/file-filter.md) (optional)
-* `callback` Function (可选)
+  * `message` String (optional) *macOS* - Message to display above text fields.
+  * `nameFieldLabel` String (optional) *macOS* - Custom label for the text displayed in front of the filename text field.
+  * `showsTagField` Boolean (optional) *macOS* - Show the tags input box, defaults to `true`.
+* `callback` Function (optional) 
   * `filename` String
 
-成功使用这个方法的话，就返回一个可供用户选择的文件路径数组，失败返回 `undefined`。
+Returns `String`, the path of the file chosen by the user, if a callback is provided it returns `undefined`.
 
-`browserWindow` 参数允许对话框将自身附加到父窗口，使其成为模态。
+The `browserWindow` argument allows the dialog to attach itself to a parent window, making it modal.
 
-`filters` 指定展示一个文件类型数组, 例子
-`dialog.showOpenDialog` 。
+The `filters` specifies an array of file types that can be displayed, see `dialog.showOpenDialog` for an example.
 
-如果 `callback` 被调用, 将异步调用 API ，并且结果将用过  `callback(filenames)` 展示。
+If a `callback` is passed, the API call will be asynchronous and the result will be passed via `callback(filename)`
 
 ### `dialog.showMessageBox([browserWindow, ]options[, callback])`
 
 * `browserWindow` BrowserWindow (可选)
-* `options` Object
-  * `type` String - 可以是 `"none"`, `"info"`, `"error"`, `"question"` 或
-  `"warning"`. 在 Windows, "question" 与 "info" 展示图标相同, 除非你使用 "icon" 参数.
-  * `buttons` String[]- (可选)  - 按钮上文字的数组，在 Windows 系统中，空数组在按钮上会显示 “OK”.
-  * `defaultId` Integer (可选) - 在 message box 对话框打开的时候，设置默认选中的按钮，值为在 buttons 数组中的索引.
-  * `title` String (可选) - message box 的标题，一些平台不显示.
-  * `message` String (可选) - message box 的内容.
-  * `detail` String (可选)- 额外信息.
-  * `checkboxLabel` String (可选) - 如果有该参数，message box 中会显示一个 checkbox 复选框，它的勾选状态可以在 `callback` 回调方法中获取。
-  * `checkboxChecked` Boolean (可选) - checkbox 的初始值，默认为`false`.
-  * `icon` [NativeImage](native-image.md)(可选)
-  * `cancelId` Integer - 当用户不是通过按钮而是使用其他方式关闭对话框时，比如按`Esc`键，就返回该值.默认值为对应 "cancel" 或 "no" 标签 button 的索引值, 如果没有这种 button，就返回0. 该选项在 Windows 上无效.
-  * `noLink` Boolean(可选) - 在 Windows 系统中，Electron 将尝试识别哪个button 是普通 button (如 "Cancel" 或 "Yes"), 然后在对话框中以链接命令(command links)方式展现其它的 button . 这能让对话框展示得很炫酷.如果你不喜欢这种效果，你可以设置 `noLink` 为 `true`.
-* `callback` Function (可选)
-    * `response` Number - 被点击按钮的索引值。
-    * `checkboxChecked` Boolean - 如果设置了 `checkboxLabel` ,会显示 checkbox 的选中状态，否则显示 `false`
+* `options` Object 
+  * `type` String (optional) - Can be `"none"`, `"info"`, `"error"`, `"question"` or `"warning"`. On Windows, `"question"` displays the same icon as `"info"`, unless you set an icon using the `"icon"` option. On macOS, both `"warning"` and `"error"` display the same warning icon.
+  * `buttons` String[] (optional) - Array of texts for buttons. On Windows, an empty array will result in one button labeled "OK".
+  * `defaultId` Integer (optional) - Index of the button in the buttons array which will be selected by default when the message box opens.
+  * `title` String (optional) - Title of the message box, some platforms will not show it.
+  * `message` String - Content of the message box.
+  * `detail` String (optional) - Extra information of the message.
+  * `checkboxLabel` String (optional) - If provided, the message box will include a checkbox with the given label. The checkbox state can be inspected only when using `callback`.
+  * `checkboxChecked` Boolean (optional) - Initial checked state of the checkbox. `false` by default.
+  * `icon` [NativeImage](native-image.md) (optional)
+  * `cancelId` Integer (optional) - The index of the button to be used to cancel the dialog, via the `Esc` key. By default this is assigned to the first button with "cancel" or "no" as the label. If no such labeled buttons exist and this option is not set, `` will be used as the return value or callback response. This option is ignored on Windows.
+  * `noLink` Boolean (optional) - On Windows Electron will try to figure out which one of the `buttons` are common buttons (like "Cancel" or "Yes"), and show the others as command links in the dialog. This can make the dialog appear in the style of modern Windows apps. If you don't like this behavior, you can set `noLink` to `true`.
+  * `normalizeAccessKeys` Boolean (optional) - Normalize the keyboard access keys across platforms. 默认值为 `false`. Enabling this assumes `&` is used in the button labels for the placement of the keyboard shortcut access key and labels will be converted so they work correctly on each platform, `&` characters are removed on macOS, converted to `_` on Linux, and left untouched on Windows. For example, a button label of `Vie&w` will be converted to `Vie_w` on Linux and `View` on macOS and can be selected via `Alt-W` on Windows and Linux.
+* `callback` Function (optional) 
+  * `response` Number - The index of the button that was clicked
+  * `checkboxChecked` Boolean - The checked state of the checkbox if `checkboxLabel` was set. Otherwise `false`.
 
-返回 `Integer`，如果提供了回调，它会返回点击的按钮的索引或者 undefined 。
+Returns `Integer`, the index of the clicked button, if a callback is provided it returns undefined.
 
-显示 message box 时, 它会阻塞进程，直到 message box 关闭为止.返回点击按钮的索引值。
+Shows a message box, it will block the process until the message box is closed. It returns the index of the clicked button.
 
-`browserWindow` 参数允许对话框将自身附加到父窗口，使其成为模态。
+The `browserWindow` argument allows the dialog to attach itself to a parent window, making it modal.
 
-如果 `callback` 被调用, 将异步调用 API ，并且结果将用过  `callback(response)` 展示。
+If a `callback` is passed, the dialog will not block the process. The API call will be asynchronous and the result will be passed via `callback(response)`.
 
 ### `dialog.showErrorBox(title, content)`
 
-* `title` String - 错误框中的标题
-* `content` String - 错误框中的内容
+* `title` String - The title to display in the error box
+* `content` String - The text content to display in the error box
 
-展示一个传统的包含错误信息的对话框.
+Displays a modal dialog that shows an error message.
 
-在 `app` 模块触发 `ready` 事件之前，这个 api 可以被安全调用，通常它被用来在启动的早期阶段报告错误.  在 Linux 上，如果在 `app` 模块触发 `ready` 事件之前调用，message 将会被触发显示 stderr ，并且没有实际 GUI 框显示.
+This API can be called safely before the `ready` event the `app` module emits, it is usually used to report errors in early stage of startup. If called before the app `ready`event on Linux, the message will be emitted to stderr, and no GUI dialog will appear.
 
-## Sheets
+### `dialog.showCertificateTrustDialog([browserWindow, ]options, callback)` *macOS* *Windows*
 
-在 macOS 上，如果你想像 sheets 一样展示对话框，只需要在`browserWindow` 参数中提供一个 `BrowserWindow` 的引用对象.，如果没有则为模态窗口。
+* `browserWindow` BrowserWindow (可选)
+* `options` Object 
+  * `certificate` [Certificate](structures/certificate.md) - The certificate to trust/import.
+  * `message` String - The message to display to the user.
+* `callback` Function
 
-你可以调用 `BrowserWindow.getCurrentWindow().setSheetOffset(offset)` 来改变
-sheets 的窗口框架的偏移量。
+On macOS, this displays a modal dialog that shows a message and certificate information, and gives the user the option of trusting/importing the certificate. If you provide a `browserWindow` argument the dialog will be attached to the parent window, making it modal.
+
+On Windows the options are more limited, due to the Win32 APIs used:
+
+* The `message` argument is not used, as the OS provides its own confirmation dialog.
+* The `browserWindow` argument is ignored since it is not possible to make this confirmation dialog modal.
+
+## 工作表
+
+On macOS, dialogs are presented as sheets attached to a window if you provide a `BrowserWindow` reference in the `browserWindow` parameter, or modals if no window is provided.
+
+You can call `BrowserWindow.getCurrentWindow().setSheetOffset(offset)` to change the offset from the window frame where sheets are attached.

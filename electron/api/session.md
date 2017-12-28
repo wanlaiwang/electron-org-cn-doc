@@ -1,12 +1,12 @@
 # session
 
-> 管理浏览器会话，Cookie，缓存，代理设置等。
+> Manage browser sessions, cookies, cache, proxy settings, etc.
 
-进程： [Main](../glossary.md#main-process)
+线程：[主线程](../glossary.md#main-process)
 
-`session` 模块可以用来创建一个新的 `Session` 对象。
+The `session` module can be used to create new `Session` objects.
 
-你也可以通过使用 [`webContents`](web-contents.md) 的属性 `session` 来使用一个已有页面的 `session` ，`webContents` 是[`BrowserWindow`](browser-window.md) 的属性。
+You can also access the `session` of existing pages by using the `session` property of [`WebContents`](web-contents.md), or from the `session` module.
 
 ```javascript
 const {BrowserWindow} = require('electron')
@@ -20,40 +20,35 @@ console.log(ses.getUserAgent())
 
 ## 方法
 
-`session` 模块有如下方法：
+The `session` module has the following methods:
 
 ### `session.fromPartition(partition[, options])`
 
 * `partition` String
-* `options` Object
-  * `cache` Boolean - 是否启用缓存。
+* `options` Object 
+  * `cache` Boolean - Whether to enable cache.
 
-从字符串 `partition` 返回一个新的 `Session` 实例。
+Returns `Session` - A session instance from `partition` string. When there is an existing `Session` with the same `partition`, it will be returned; otherwise a new `Session` instance will be created with `options`.
 
-返回 `Session` - 一个来自 `partition` 字符串的会话实例。当存在时
-`Session` 与同一个 `partition`，它会被返回；否则一个新
-`Session` 实例将使用 `options` 创建。
+If `partition` starts with `persist:`, the page will use a persistent session available to all pages in the app with the same `partition`. if there is no `persist:` prefix, the page will use an in-memory session. If the `partition` is empty then default session of the app will be returned.
 
-如果 `partition` 以 `persist:` 开头，那么这个 page 将使用一个持久的 session，这个 session 将对应用的所有 page 可用。如果没前缀，这个 page 将使用一个历史 session。如果 `partition` 为空，那么将返回应用的默认 session。
-
-要用 `options` 创建一个 `Session`，你必须确保 `Session` 与
-`partition` 从来没有被使用过。没有办法改变现有 `Session` 对象的 `options'。
+To create a `Session` with `options`, you have to ensure the `Session` with the `partition` has never been used before. There is no way to change the `options` of an existing `Session` object.
 
 ## 属性
 
-`session` 模块有如下属性：
+The `session` module has the following properties:
 
-### session.defaultSession
+### `session.defaultSession`
 
-返回应用的默认 `Session` 对象。
+A `Session` object, the default session object of the app.
 
 ## Class: Session
 
-> 获取和设置会话的属性。
+> Get and set properties of a session.
 
-进程: [Main](../glossary.md#main-process)
+线程：[主线程](../glossary.md#main-process)
 
-可以在 `session` 模块中创建一个 `Session` 对象：
+You can create a `Session` object in the `session` module:
 
 ```javascript
 const {session} = require('electron')
@@ -61,9 +56,9 @@ const ses = session.fromPartition('persist:name')
 console.log(ses.getUserAgent())
 ```
 
-### 实例事件
+### 事件
 
-实例 `Session` 有以下事件:
+The following events are available on instances of `Session`:
 
 #### Event: 'will-download'
 
@@ -71,9 +66,9 @@ console.log(ses.getUserAgent())
 * `item` [DownloadItem](download-item.md)
 * `webContents` [WebContents](web-contents.md)
 
-当 Electron 将要从 `webContents` 下载 `item` 时触发.
+Emitted when Electron is about to download `item` in `webContents`.
 
-调用 `event.preventDefault()` 可以取消下载，并且在进程的下个 tick 中，这个 `item` 也不可用。
+Calling `event.preventDefault()` will cancel the download and `item` will not be available from next tick of the process.
 
 ```javascript
 const {session} = require('electron')
@@ -87,221 +82,182 @@ session.defaultSession.on('will-download', (event, item, webContents) => {
 
 ### 实例方法
 
-实例 `Session` 有以下方法：
-
-#### `ses.cookies`
-
-`cookies` 赋予你全力来查询和修改 cookies. 例如:
-
-```javascript
-// 查询所有 cookies.
-session.defaultSession.cookies.get({}, function (error, cookies) {
-  if (error) console.error(error)
-  console.log(cookies)
-})
-
-// 查询与指定 url 相关的所有 cookies.
-session.defaultSession.cookies.get({ url: 'http://www.github.com' }, function (error, cookies) {
-  if (error) console.error(error)
-  console.log(cookies)
-})
-
-// 设置 cookie;
-// may overwrite equivalent cookies if they exist.
-var cookie = { url: 'http://www.github.com', name: 'dummy_name', value: 'dummy' }
-session.defaultSession.cookies.set(cookie, function (error) {
-  if (error) console.error(error)
-})
-```
-
-#### `ses.cookies.get(filter, callback)`
-
-* `filter` Object
-  * `url` String (可选) - 与获取 cookies 相关的
-    `url`.不设置的话就是从所有 url 获取 cookies .
-  * `name` String (可选) - 通过 name 过滤 cookies.
-  * `domain` String (可选) - 获取对应域名或子域名的 cookies .
-  * `path` String (可选) - 获取对应路径的 cookies .
-  * `secure` Boolean (可选) - 通过安全性过滤 cookies.
-  * `session` Boolean (可选) - 过滤掉 session 或 持久的 cookies.
-* `callback` Function
-
-发送一个请求，希望获得所有匹配 `details` 的 cookies,
-在完成的时候，将通过 `callback(error, cookies)` 调用 `callback`.
-
-`cookies`是一个 `cookie` 对象.
-
-* `cookie` Object
-  *  `name` String - cookie 名.
-  *  `value` String - cookie值.
-  *  `domain` String - cookie域名.
-  *  `hostOnly` String - 是否 cookie 是一个 host-only cookie.
-  *  `path` String - cookie路径.
-  *  `secure` Boolean - 是否是安全 cookie.
-  *  `httpOnly` Boolean - 是否只是 HTTP cookie.
-  *  `session` Boolean - cookie 是否是一个 session cookie 或一个带截至日期的持久
-     cookie .
-  *  `expirationDate` Double (可选) - cookie的截至日期，数值为UNIX纪元以来的秒数. 对session cookies 不提供.
-
-#### `ses.cookies.set(details, callback)`
-
-* `details` Object
-  * `url` String - 与获取 cookies 相关的
-    `url`.
-  * `name` String - cookie 名. 忽略默认为空.
-  * `value` String - cookie 值. 忽略默认为空.
-  * `domain` String - cookie的域名. 忽略默认为空.
-  * `path` String - cookie 的路径. 忽略默认为空.
-  * `secure` Boolean - 是否已经进行了安全性标识. 默认为
-    false.
-  * `session` Boolean - 是否已经 HttpOnly 标识. 默认为 false.
-  * `expirationDate` Double -	cookie的截至日期，数值为UNIX纪元以来的秒数. 如果忽略, cookie 变为 session cookie.
-* `callback` Function
-
-使用 `details` 设置 cookie, 完成时使用 `callback(error)` 掉哟个 `callback` .
-
-#### `ses.cookies.remove(url, name, callback)`
-
-* `url` String - 与 cookies 相关的
-    `url`.
-* `name` String - 需要删除的 cookie 名.
-* `callback` Function
-
-删除匹配 `url` 和 `name` 的 cookie, 完成时使用 `callback()`调用`callback`.
+The following methods are available on instances of `Session`:
 
 #### `ses.getCacheSize(callback)`
 
-* `callback` Function
-  * `size` Integer - 单位 bytes 的缓存 size.
+* `callback` Function 
+  * `size` Integer - Cache size used in bytes.
 
-返回 session 的当前缓存 size .
+Callback is invoked with the session's current cache size.
 
 #### `ses.clearCache(callback)`
 
-* `callback` Function - 操作完成时调用
+* `callback` Function - Called when operation is done
 
-清空 session 的 HTTP 缓存.
+Clears the session’s HTTP cache.
 
-#### `ses.clearStorageData([options, ]callback)`
+#### `ses.clearStorageData([options, callback])`
 
-* `options` Object (可选)
-  * `origin` String - 应当遵循 `window.location.origin` 的格式
-    `scheme://host:port`.
-  * `storages` Array - 需要清理的 storages 类型, 可以包含 :
-    `appcache`, `cookies`, `filesystem`, `indexdb`, `local storage`,
-    `shadercache`, `websql`, `serviceworkers`
-  * `quotas` Array - 需要清理的类型指标, 可以包含:
-    `temporary`, `persistent`, `syncable`.
-* `callback` Function - 操作完成时调用.
+* `options` Object (可选) 
+  * `origin` String - (optional) Should follow `window.location.origin`’s representation `scheme://host:port`.
+  * `storages` String[] - (optional) The types of storages to clear, can contain: `appcache`, `cookies`, `filesystem`, `indexdb`, `localstorage`, `shadercache`, `websql`, `serviceworkers`
+  * `quotas` String[] - (optional) The types of quotas to clear, can contain: `temporary`, `persistent`, `syncable`.
+* `callback` Function (optional) - Called when operation is done.
 
-清除 web storages 的数据.
+Clears the data of web storages.
 
 #### `ses.flushStorageData()`
 
-将没有写入的 DOMStorage 写入磁盘.
+Writes any unwritten DOMStorage data to disk.
 
 #### `ses.setProxy(config, callback)`
 
-* `config` Object
-  * `pacScript` String - 与 PAC 文件相关的 URL.
-  * `proxyRules` String - 代理使用规则.
-* `callback` Function - 操作完成时调用.
+* `config` Object 
+  * `pacScript` String - The URL associated with the PAC file.
+  * `proxyRules` String - Rules indicating which proxies to use.
+  * `proxyBypassRules` String - Rules indicating which URLs should bypass the proxy settings.
+* `callback` Function - Called when operation is done.
 
-设置 proxy settings.
+Sets the proxy settings.
 
-当 `pacScript` 和 `proxyRules` 一同提供时，将忽略 `proxyRules`，并且使用 `pacScript` 配置 .
+When `pacScript` and `proxyRules` are provided together, the `proxyRules` option is ignored and `pacScript` configuration is applied.
 
-`proxyRules` 需要遵循下面的规则:
+The `proxyRules` has to follow the rules below:
 
-```
-proxyRules = schemeProxies[";"<schemeProxies>]
-schemeProxies = [<urlScheme>"="]<proxyURIList>
-urlScheme = "http" | "https" | "ftp" | "socks"
-proxyURIList = <proxyURL>[","<proxyURIList>]
-proxyURL = [<proxyScheme>"://"]<proxyHost>[":"<proxyPort>]
-```
+    proxyRules = schemeProxies[";"<schemeProxies>]
+    schemeProxies = [<urlScheme>"="]<proxyURIList>
+    urlScheme = "http" | "https" | "ftp" | "socks"
+    proxyURIList = <proxyURL>[","<proxyURIList>]
+    proxyURL = [<proxyScheme>"://"]<proxyHost>[":"<proxyPort>]
+    
 
-例子:
+例如：
 
-* `http=foopy:80;ftp=foopy2` - 为 `http://` URL 使用 HTTP 代理 `foopy:80` , 和为 `ftp://` URL
-  HTTP 代理 `foopy2:80` .
-* `foopy:80` - 为所有 URL 使用 HTTP 代理 `foopy:80` .
-* `foopy:80,bar,direct://` - 为所有 URL 使用 HTTP 代理 `foopy:80` , 如果 `foopy:80` 不可用，则切换使用  `bar`, 再往后就不使用代理了.
-* `socks4://foopy` - 为所有 URL 使用 SOCKS v4 代理 `foopy:1080`.
-* `http=foopy,socks5://bar.com` - 为所有 URL 使用 HTTP 代理 `foopy`, 如果 `foopy`不可用，则切换到 SOCKS5 代理 `bar.com`.
-* `http=foopy,direct://` - 为所有http url 使用 HTTP 代理，如果 `foopy`不可用，则不使用代理.
-* `http=foopy;socks=foopy2` -  为所有http url 使用 `foopy` 代理，为所有其他 url 使用 `socks4://foopy2` 代理.
+* `http=foopy:80;ftp=foopy2` - Use HTTP proxy `foopy:80` for `http://` URLs, and HTTP proxy `foopy2:80` for `ftp://` URLs.
+* `foopy:80` - Use HTTP proxy `foopy:80` for all URLs.
+* `foopy:80,bar,direct://` - Use HTTP proxy `foopy:80` for all URLs, failing over to `bar` if `foopy:80` is unavailable, and after that using no proxy.
+* `socks4://foopy` - Use SOCKS v4 proxy `foopy:1080` for all URLs.
+* `http=foopy,socks5://bar.com` - Use HTTP proxy `foopy` for http URLs, and fail over to the SOCKS5 proxy `bar.com` if `foopy` is unavailable.
+* `http=foopy,direct://` - Use HTTP proxy `foopy` for http URLs, and use no proxy if `foopy` is unavailable.
+* `http=foopy;socks=foopy2` - Use HTTP proxy `foopy` for http URLs, and use `socks4://foopy2` for all other URLs.
 
-### `ses.resolveProxy(url, callback)`
+The `proxyBypassRules` is a comma separated list of rules described below:
+
+* `[ URL_SCHEME "://" ] HOSTNAME_PATTERN [ ":" <port> ]`
+  
+  Match all hostnames that match the pattern HOSTNAME_PATTERN.
+  
+  Examples: "foobar.com", "*foobar.com", "*.foobar.com", "*foobar.com:99", "https://x.*.y.com:99"
+  
+  * `"." HOSTNAME_SUFFIX_PATTERN [ ":" PORT ]`
+    
+    Match a particular domain suffix.
+    
+    Examples: ".google.com", ".com", "http://.google.com"
+
+* `[ SCHEME "://" ] IP_LITERAL [ ":" PORT ]`
+  
+  Match URLs which are IP address literals.
+  
+  Examples: "127.0.1", "[0:0::1]", "[::1]", "http://[::1]:99"
+
+* `IP_LITERAL "/" PREFIX_LENGHT_IN_BITS`
+  
+  Match any URL that is to an IP literal that falls between the given range. IP range is specified using CIDR notation.
+  
+  Examples: "192.168.1.1/16", "fefe:13::abc/33".
+
+* `<local>`
+  
+  Match local addresses. The meaning of `<local>` is whether the host matches one of: "127.0.0.1", "::1", "localhost".
+
+#### `ses.resolveProxy(url, callback)`
 
 * `url` URL
-* `callback` Function
+* `callback` Function 
+  * `proxy` String
 
-解析 `url` 的代理信息.当请求完成的时候使用 `callback(proxy)` 调用 `callback`.
+Resolves the proxy information for `url`. The `callback` will be called with `callback(proxy)` when the request is performed.
 
 #### `ses.setDownloadPath(path)`
 
-* `path` String - 下载地址
+* `path` String - The download location
 
-设置下载保存地址，默认保存地址为各自 app 应用的 `Downloads`目录.
+Sets download saving directory. By default, the download directory will be the `Downloads` under the respective app folder.
 
 #### `ses.enableNetworkEmulation(options)`
 
-* `options` Object
-  * `offline` Boolean - 是否模拟网络故障.
-  * `latency` Double - 每毫秒的 RTT
-  * `downloadThroughput` Double - 每 Bps 的下载速率.
-  * `uploadThroughput` Double - 每 Bps 的上载速率.
+* `options` Object 
+  * `offline` Boolean (optional) - Whether to emulate network outage. Defaults to false.
+  * `latency` Double (optional) - RTT in ms. Defaults to 0 which will disable latency throttling.
+  * `downloadThroughput` Double (optional) - Download rate in Bps. Defaults to 0 which will disable download throttling.
+  * `uploadThroughput` Double (optional) - Upload rate in Bps. Defaults to 0 which will disable upload throttling.
 
-通过给定配置的 `session` 来模拟网络.
+Emulates network with the given configuration for the `session`.
 
 ```javascript
-// 模拟 GPRS 连接，使用的 50kbps 流量，500 毫秒的 rtt.
+// To emulate a GPRS connection with 50kbps throughput and 500 ms latency.
 window.webContents.session.enableNetworkEmulation({
   latency: 500,
   downloadThroughput: 6400,
   uploadThroughput: 6400
 })
 
-// 模拟网络故障.
+// To emulate a network outage.
 window.webContents.session.enableNetworkEmulation({offline: true})
 ```
 
 #### `ses.disableNetworkEmulation()`
 
-停止所有已经使用 `session` 的活跃模拟网络.
-重置为原始网络类型.
+Disables any network emulation already active for the `session`. Resets to the original network configuration.
 
 #### `ses.setCertificateVerifyProc(proc)`
 
-* `proc` Function
+* `proc` Function 
+  * `request` Object 
+    * `hostname` String
+    * `certificate` [证书](structures/certificate.md)
+    * `error` String - Verification result from chromium.
+  * `callback` Function 
+    * `verificationResult` Integer - Value can be one of certificate error codes from [here](https://code.google.com/p/chromium/codesearch#chromium/src/net/base/net_error_list.h). Apart from the certificate error codes, the following special codes can be used. 
+      * `` - Indicates success and disables Certificate Transperancy verification.
+      * `-2` - Indicates failure.
+      * `-3` - Uses the verification result from chromium.
 
-为 `session` 设置证书验证过程，当请求一个服务器的证书验证时，使用 `proc(hostname, certificate, callback)` 调用 `proc`.调用 `callback(true)` 来接收证书，调用  `callback(false)` 来拒绝验证证书.
+Sets the certificate verify proc for `session`, the `proc` will be called with `proc(request, callback)` whenever a server certificate verification is requested. Calling `callback(0)` accepts the certificate, calling `callback(-2)` rejects it.
 
-调用了 `setCertificateVerifyProc(null)` ，则将会回复到默认证书验证过程.
+Calling `setCertificateVerifyProc(null)` will revert back to default certificate verify proc.
 
 ```javascript
-myWindow.webContents.session.setCertificateVerifyProc(function (hostname, cert, callback) {
-  callback(hostname === 'github.com')
+const {BrowserWindow} = require('electron')
+let win = new BrowserWindow()
+
+win.webContents.session.setCertificateVerifyProc((request, callback) => {
+  const {hostname} = request
+  if (hostname === 'github.com') {
+    callback(0)
+  } else {
+    callback(-2)
+  }
 })
 ```
 
 #### `ses.setPermissionRequestHandler(handler)`
 
-* `handler` Function
-  * `webContents` Object - [WebContents](web-contents.md) 请求许可.
-  * `permission`  String - 枚举了 'media', 'geolocation', 'notifications', 'midiSysex', 'pointerLock', 'fullscreen'.
-  * `callback`  Function - 允许或禁止许可.
+* `handler` Function 
+  * `webContents` [WebContents](web-contents.md) - WebContents requesting the permission.
+  * `permission` String - Enum of 'media', 'geolocation', 'notifications', 'midiSysex', 'pointerLock', 'fullscreen', 'openExternal'.
+  * `callback` Function 
+    * `permissionGranted` Boolean - Allow or deny the permission
 
-为对应 `session` 许可请求设置响应句柄.调用 `callback(true)` 接收许可，调用 `callback(false)` 禁止许可.
+Sets the handler which can be used to respond to permission requests for the `session`. Calling `callback(true)` will allow the permission and `callback(false)` will reject it.
 
 ```javascript
-session.fromPartition(partition).setPermissionRequestHandler(function (webContents, permission, callback) {
-  if (webContents.getURL() === host) {
-    if (permission === 'notifications') {
-      callback(false) // denied.
-      return
-    }
+const {session} = require('electron')
+session.fromPartition('some-partition').setPermissionRequestHandler((webContents, permission, callback) => {
+  if (webContents.getURL() === 'some-host' && permission === 'notifications') {
+    return callback(false) // denied.
   }
 
   callback(true)
@@ -310,189 +266,97 @@ session.fromPartition(partition).setPermissionRequestHandler(function (webConten
 
 #### `ses.clearHostResolverCache([callback])`
 
-* `callback` Function (可选) - 操作结束调用.
+* `callback` Function (optional) - Called when operation is done.
 
-清除主机解析缓存.
+Clears the host resolver cache.
+
+#### `ses.allowNTLMCredentialsForDomains(domains)`
+
+* `domains` String - A comma-seperated list of servers for which integrated authentication is enabled.
+
+Dynamically sets whether to always send credentials for HTTP NTLM or Negotiate authentication.
+
+```javascript
+const {session} = require('electron')
+// consider any url ending with `example.com`, `foobar.com`, `baz`
+// for integrated authentication.
+session.defaultSession.allowNTLMCredentialsForDomains('*example.com, *foobar.com, *baz')
+
+// consider all urls for integrated authentication.
+session.defaultSession.allowNTLMCredentialsForDomains('*')
+```
+
+#### `ses.setUserAgent(userAgent[, acceptLanguages])`
+
+* `userAgent` String
+* `acceptLanguages` String (optional)
+
+Overrides the `userAgent` and `acceptLanguages` for this session.
+
+The `acceptLanguages` must a comma separated ordered list of language codes, for example `"en-US,fr,de,ko,zh-CN,ja"`.
+
+This doesn't affect existing `WebContents`, and each `WebContents` can use `webContents.setUserAgent` to override the session-wide user agent.
+
+#### `ses.getUserAgent()`
+
+Returns `String` - The user agent for this session.
+
+#### `ses.getBlobData(identifier, callback)`
+
+* `identifier` String - Valid UUID.
+* `callback` Function 
+  * `result` Buffer - Blob data.
+
+Returns `Blob` - The blob data associated with the `identifier`.
+
+#### `ses.createInterruptedDownload(options)`
+
+* `options` Object 
+  * `path` String - Absolute path of the download.
+  * `urlChain` String[] - Complete URL chain for the download.
+  * `mimeType` String (optional)
+  * `offset` Integer - Start range for the download.
+  * `length` Integer - Total length of the download.
+  * `lastModified` String - Last-Modified header value.
+  * `eTag` String - ETag header value.
+  * `startTime` Double (optional) - Time when download was started in number of seconds since UNIX epoch.
+
+Allows resuming `cancelled` or `interrupted` downloads from previous `Session`. The API will generate a [DownloadItem](download-item.md) that can be accessed with the [will-download](#event-will-download) event. The [DownloadItem](download-item.md) will not have any `WebContents` associated with it and the initial state will be `interrupted`. The download will start only when the `resume` API is called on the [DownloadItem](download-item.md).
+
+#### `ses.clearAuthCache(options[, callback])`
+
+* `options` ([RemovePassword](structures/remove-password.md) | [RemoveClientCertificate](structures/remove-client-certificate.md))
+* `callback` Function (optional) - Called when operation is done
+
+Clears the session’s HTTP authentication cache.
+
+### Instance Properties
+
+The following properties are available on instances of `Session`:
+
+#### `ses.cookies`
+
+A [Cookies](cookies.md) object for this session.
 
 #### `ses.webRequest`
 
-在其生命周期的不同阶段，`webRequest` API 设置允许拦截并修改请求内容.
+A [WebRequest](web-request.md) object for this session.
 
-每个 API 接收一可选的 `filter` 和 `listener`，当 API 事件发生的时候使用 `listener(details)` 调用 `listener`，`details` 是一个用来描述请求的对象.为 `listener` 使用 `null` 则会退定事件.
+#### `ses.protocol`
 
-`filter` 是一个拥有 `urls` 属性的对象，这是一个 url 模式数组，这用来过滤掉不匹配指定 url 模式的请求.如果忽略 `filter` ，那么所有请求都将可以成功匹配.
-
-所有事件的 `listener` 都有一个回调事件，当 `listener` 完成它的工作的时候，它将使用一个 `response` 对象来调用.
+A [Protocol](protocol.md) object for this session.
 
 ```javascript
-// 将所有请求的代理都修改为下列 url.
-var filter = {
-  urls: ['https://*.github.com/*', '*://electron.github.io']
-}
+const {app, session} = require('electron')
+const path = require('path')
 
-session.defaultSession.webRequest.onBeforeSendHeaders(filter, function (details, callback) {
-  details.requestHeaders['User-Agent'] = 'MyAgent'
-  callback({cancel: false, requestHeaders: details.requestHeaders})
+app.on('ready', function () {
+  const protocol = session.fromPartition('some-partition').protocol
+  protocol.registerFileProtocol('atom', function (request, callback) {
+    var url = request.url.substr(7)
+    callback({path: path.normalize(`${__dirname}/${url}`)})
+  }, function (error) {
+    if (error) console.error('Failed to register protocol')
+  })
 })
 ```
-
-#### `ses.webRequest.onBeforeRequest([filter, ]listener)`
-
-* `filter` Object
-* `listener` Function
-
-当一个请求即将开始的时候，使用 `listener(details, callback)` 调用 `listener`.
-
-* `details` Object
-  * `id` Integer
-  * `url` String
-  * `method` String
-  * `resourceType` String
-  * `timestamp` Double
-  * `uploadData` Array (可选)
-* `callback` Function
-
-`uploadData` 是一个 `data` 数组对象:
-
-* `data` Object
-  * `bytes` Buffer - 被发送的内容.
-  * `file` String - 上载文件路径.
-
-`callback` 必须使用一个 `response` 对象来调用:
-
-* `response` Object
-  * `cancel` Boolean (可选)
-  * `redirectURL` String (可选) - 原始请求阻止发送或完成，而不是重定向.
-
-#### `ses.webRequest.onBeforeSendHeaders([filter, ]listener)`
-
-* `filter` Object
-* `listener` Function
-
-一旦请求报文头可用了,在发送 HTTP 请求的之前，使用 `listener(details, callback)` 调用 `listener`.这也许会在服务器发起一个tcp 连接，但是在发送任何 http 数据之前发生.
-
-* `details` Object
-  * `id` Integer
-  * `url` String
-  * `method` String
-  * `resourceType` String
-  * `timestamp` Double
-  * `requestHeaders` Object
-* `callback` Function
-
-必须使用一个 `response` 对象来调用 `callback` :
-
-* `response` Object
-  * `cancel` Boolean (可选)
-  * `requestHeaders` Object (可选) - 如果提供了,将使用这些 headers 来创建请求.
-
-#### `ses.webRequest.onSendHeaders([filter, ]listener)`
-
-* `filter` Object
-* `listener` Function
-
-在一个请求正在发送到服务器的时候，使用 `listener(details)` 来调用 `listener` ，之前 `onBeforeSendHeaders` 修改部分响应可用，同时取消监听.
-
-* `details` Object
-  * `id` Integer
-  * `url` String
-  * `method` String
-  * `resourceType` String
-  * `timestamp` Double
-  * `requestHeaders` Object
-
-#### `ses.webRequest.onHeadersReceived([filter,] listener)`
-
-* `filter` Object
-* `listener` Function
-
-当 HTTP 请求报文头已经到达的时候，使用 `listener(details, callback)` 调用 `listener` .
-
-* `details` Object
-  * `id` String
-  * `url` String
-  * `method` String
-  * `resourceType` String
-  * `timestamp` Double
-  * `statusLine` String
-  * `statusCode` Integer
-  * `responseHeaders` Object
-* `callback` Function
-
-必须使用一个 `response` 对象来调用 `callback` :
-
-* `response` Object
-  * `cancel` Boolean
-  * `responseHeaders` Object (可选) - 如果提供, 服务器将假定使用这些头来响应.
-
-#### `ses.webRequest.onResponseStarted([filter, ]listener)`
-
-* `filter` Object
-* `listener` Function
-
-当响应body的首字节到达的时候，使用 `listener(details)` 调用 `listener`.对 http 请求来说，这意味着状态线和响应头可用了.
-
-* `details` Object
-  * `id` Integer
-  * `url` String
-  * `method` String
-  * `resourceType` String
-  * `timestamp` Double
-  * `responseHeaders` Object
-  * `fromCache` Boolean  - 标识响应是否来自磁盘
-    cache.
-  * `statusCode` Integer
-  * `statusLine` String
-
-#### `ses.webRequest.onBeforeRedirect([filter, ]listener)`
-
-* `filter` Object
-* `listener` Function
-
-当服务器的重定向初始化正要启动时，使用 `listener(details)` 调用 `listener`.
-
-* `details` Object
-  * `id` String
-  * `url` String
-  * `method` String
-  * `resourceType` String
-  * `timestamp` Double
-  * `redirectURL` String
-  * `statusCode` Integer
-  * `ip` String (可选) - 请求的真实服务器ip 地址
-  * `fromCache` Boolean
-  * `responseHeaders` Object
-
-#### `ses.webRequest.onCompleted([filter, ]listener)`
-
-* `filter` Object
-* `listener` Function
-
-当请求完成的时候，使用 `listener(details)` 调用 `listener`.
-
-* `details` Object
-  * `id` Integer
-  * `url` String
-  * `method` String
-  * `resourceType` String
-  * `timestamp` Double
-  * `responseHeaders` Object
-  * `fromCache` Boolean
-  * `statusCode` Integer
-  * `statusLine` String
-
-#### `ses.webRequest.onErrorOccurred([filter, ]listener)`
-
-* `filter` Object
-* `listener` Function
-
-当一个错误发生的时候，使用 `listener(details)` 调用 `listener`.
-
-* `details` Object
-  * `id` Integer
-  * `url` String
-  * `method` String
-  * `resourceType` String
-  * `timestamp` Double
-  * `fromCache` Boolean
-  * `error` String - 错误描述.

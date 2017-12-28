@@ -14,7 +14,7 @@ A sandboxed renderer doesn't have a node.js environment running and doesn't expo
 
 Another difference is that sandboxed renderers don't modify any of the default JavaScript APIs. Consequently, some APIs such as `window.open` will work as they do in chromium (i.e. they do not return a `BrowserWindowProxy`).
 
-## Example
+## 例子
 
 To create a sandboxed window, simply pass `sandbox: true` to `webPreferences`:
 
@@ -47,10 +47,8 @@ app.on('ready', () => {
 
 Note that it is not enough to call `app.commandLine.appendSwitch('--enable-sandbox')`, as electron/node startup code runs after it is possible to make changes to chromium sandbox settings. The switch must be passed to electron on the command-line:
 
-```
-electron --enable-sandbox app.js
-
-```
+    electron --enable-sandbox app.js
+    
 
 It is not possible to have the OS sandbox active only for some renderers, if `--enable-sandbox` is enabled, normal electron windows cannot be created.
 
@@ -101,30 +99,28 @@ window.open = customWindowOpen
 
 Important things to notice in the preload script:
 
-*   Even though the sandboxed renderer doesn't have node.js running, it still has access to a limited node-like environment: `Buffer`, `process`, `setImmediate` and `require` are available.
-*   The preload script can indirectly access all APIs from the main process through the `remote` and `ipcRenderer` modules. This is how `fs` (used above) and other modules are implemented: They are proxies to remote counterparts in the main process.
-*   The preload script must be contained in a single script, but it is possible to have complex preload code composed with multiple modules by using a tool like browserify, as explained below. In fact, browserify is already used by electron to provide a node-like environment to the preload script.
+- Even though the sandboxed renderer doesn't have node.js running, it still has access to a limited node-like environment: `Buffer`, `process`, `setImmediate` and `require` are available.
+- The preload script can indirectly access all APIs from the main process through the `remote` and `ipcRenderer` modules. This is how `fs` (used above) and other modules are implemented: They are proxies to remote counterparts in the main process.
+- The preload script must be contained in a single script, but it is possible to have complex preload code composed with multiple modules by using a tool like browserify, as explained below. In fact, browserify is already used by electron to provide a node-like environment to the preload script.
 
 To create a browserify bundle and use it as a preload script, something like the following should be used:
 
-```
-browserify preload/index.js \
-  -x electron \
-  -x fs \
-  --insert-global-vars=__filename,__dirname -o preload.js
-
-```
+    browserify preload/index.js \
+      -x electron \
+      -x fs \
+      --insert-global-vars=__filename,__dirname -o preload.js
+    
 
 The `-x` flag should be used with any required module that is already exposed in the preload scope, and tells browserify to use the enclosing `require` function for it. `--insert-global-vars` will ensure that `process`, `Buffer` and `setImmediate` are also taken from the enclosing scope(normally browserify injects code for those).
 
 Currently the `require` function provided in the preload scope exposes the following modules:
 
-*   `child_process`
-*   `electron` (crashReporter, remote and ipcRenderer)
-*   `fs`
-*   `os`
-*   `timers`
-*   `url`
+- `child_process`
+- `electron` (crashReporter, remote and ipcRenderer)
+- `fs`
+- `os`
+- `timers`
+- `url`
 
 More may be added as needed to expose more electron APIs in the sandbox, but any module in the main process can already be used through `electron.remote.require`.
 
@@ -132,8 +128,8 @@ More may be added as needed to expose more electron APIs in the sandbox, but any
 
 Please use the `sandbox` option with care, as it is still an experimental feature. We are still not aware of the security implications of exposing some electron renderer APIs to the preload script, but here are some things to consider before rendering untrusted content:
 
-*   A preload script can accidentaly leak privileged APIs to untrusted code.
-*   Some bug in V8 engine may allow malicious code to access the renderer preload APIs, effectively granting full access to the system through the `remote` module.
+- A preload script can accidentaly leak privileged APIs to untrusted code.
+- Some bug in V8 engine may allow malicious code to access the renderer preload APIs, effectively granting full access to the system through the `remote` module.
 
 Since rendering untrusted content in electron is still uncharted territory, the APIs exposed to the sandbox preload script should be considered more unstable than the rest of electron APIs, and may have breaking changes to fix security issues.
 

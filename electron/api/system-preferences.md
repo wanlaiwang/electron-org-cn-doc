@@ -1,8 +1,8 @@
 # systemPreferences
 
-> 获取系统偏好设置。
+> Get system preferences.
 
-可使用的进程: [主进程](../tutorial/quick-start.md#main-process)
+线程：[主线程](../glossary.md#main-process)
 
 ```javascript
 const {systemPreferences} = require('electron')
@@ -11,144 +11,142 @@ console.log(systemPreferences.isDarkMode())
 
 ## 事件
 
-`systemPreferences` 对象会触发以下事件：
+The `systemPreferences` object emits the following events:
 
-### Event: 'accent-color-changed' _Windows_
+### Event: 'accent-color-changed' *Windows*
 
-返回：
-
-* `event` Event
-* `newColor` String - 用户给系统颜色设置的新的 RGBA 色值。
-
-### Event: 'color-changed' _Windows_
-
-返回：
+返回:
 
 * `event` Event
+* `newColor` String - The new RGBA color the user assigned to be their system accent color.
 
-### Event: 'inverted-color-scheme-changed' _Windows_
+### Event: 'color-changed' *Windows*
 
-返回：
+返回:
 
 * `event` Event
-* `invertedColorScheme` Boolean - 如果一个反色的配色方案正在被使用，比如一个高对比度的主题，则返回 `true` ，否则返回 `false` 。
+
+### Event: 'inverted-color-scheme-changed' *Windows*
+
+返回:
+
+* `event` Event
+* `invertedColorScheme` Boolean - `true` if an inverted color scheme, such as a high contrast theme, is being used, `false` otherwise.
 
 ## 方法
 
-### `systemPreferences.isDarkMode()` _macOS_
+### `systemPreferences.isDarkMode()` *macOS*
 
-返回 `Boolean` - 系统是否处于深色模式。
+Returns `Boolean` - Whether the system is in Dark Mode.
 
-### `systemPreferences.isSwipeTrackingFromScrollEventsEnabled()` _macOS_
+### `systemPreferences.isSwipeTrackingFromScrollEventsEnabled()` *macOS*
 
-返回 `Boolean` - 是否开启页面间滑动功能。
+Returns `Boolean` - Whether the Swipe between pages setting is on.
 
-### `systemPreferences.postNotification(event, userInfo)` _macOS_
-
-* `event` String
-* `userInfo` Object
-
-在 macOS 上使用原生系统通知来发布 `event` 。`userInfo` 是包含了用户向通知发送的信息字典的一个对象。
-
-### `systemPreferences.postLocalNotification(event, userInfo)` _macOS_
+### `systemPreferences.postNotification(event, userInfo)` *macOS*
 
 * `event` String
 * `userInfo` Object
 
-在 macOS 上使用原生系统通知来发布 `event` 。`userInfo` 是包含了用户向通知发送的信息字典的一个对象。
+Posts `event` as native notifications of macOS. The `userInfo` is an Object that contains the user information dictionary sent along with the notification.
 
-### `systemPreferences.subscribeNotification(event, callback)` _macOS_
+### `systemPreferences.postLocalNotification(event, userInfo)` *macOS*
 
 * `event` String
-* `callback` Function
+* `userInfo` Object
+
+Posts `event` as native notifications of macOS. The `userInfo` is an Object that contains the user information dictionary sent along with the notification.
+
+### `systemPreferences.subscribeNotification(event, callback)` *macOS*
+
+* `event` String
+* `callback` Function 
   * `event` String
   * `userInfo` Object
 
-在 macOS 上订阅一个原生消息。当相关 `event` 发生， `callback` 将会被 `callback(event, userInfo)` 调用。`userInfo` 是包含了用户向通知发送的信息字典的一个对象。
+Subscribes to native notifications of macOS, `callback` will be called with `callback(event, userInfo)` when the corresponding `event` happens. The `userInfo` is an Object that contains the user information dictionary sent along with the notification.
 
-订阅者的 `id` 将会被返回，它能够用于取消订阅相关 `event` 。
+The `id` of the subscriber is returned, which can be used to unsubscribe the `event`.
 
-这个API在底层上订阅于 `NSDistributedNotificationCenter`，
- `event` 的一些实例值如下：
+Under the hood this API subscribes to `NSDistributedNotificationCenter`, example values of `event` are:
 
 * `AppleInterfaceThemeChangedNotification`
 * `AppleAquaColorVariantChanged`
 * `AppleColorPreferencesChangedNotification`
 * `AppleShowScrollBarsSettingChanged`
 
-### `systemPreferences.unsubscribeNotification(id)` _macOS_
+### `systemPreferences.unsubscribeNotification(id)` *macOS*
 
 * `id` Integer
 
-移除当前 `id` 下的订阅。
+Removes the subscriber with `id`.
 
-### `systemPreferences.subscribeLocalNotification(event, callback)` _macOS_
+### `systemPreferences.subscribeLocalNotification(event, callback)` *macOS*
 
 * `event` String
-* `callback` Function
+* `callback` Function 
   * `event` String
   * `userInfo` Object
 
-大体上如同 `subscribeNotification` ，但默认使用本地 `subscribeNotification` 。一些事件必须使用它，比如 `NSUserDefaultsDidChangeNotification` 。
+Same as `subscribeNotification`, but uses `NSNotificationCenter` for local defaults. This is necessary for events such as `NSUserDefaultsDidChangeNotification`
 
-### `systemPreferences.unsubscribeLocalNotification(id)` _macOS_
+### `systemPreferences.unsubscribeLocalNotification(id)` *macOS*
 
 * `id` Integer
 
-大体上如同 `unsubscribeNotification` ， 但是是从 `NSNotificationCenter` 中移除订阅者。
+Same as `unsubscribeNotification`, but removes the subscriber from `NSNotificationCenter`.
 
-### `systemPreferences.getUserDefault(key, type)` _macOS_
-
-* `key` String
-* `type` String - Can be `string`, `boolean`, `integer`, `float`, `double`,
-  `url`, `array`, `dictionary`
-
-获取系统偏好中相应的 `key` 的值。
-
-这个 API 在 macOS 系统中使用的是 `NSUserDefaults` 。以下是一些热门的 `key` 和 `type`：
-
-* `AppleInterfaceStyle`:  `string`
-* `AppleAquaColorVariant`:  `integer`
-* `AppleHighlightColor`:  `string`
-* `AppleShowScrollBars`:  `string`
-* `NSNavRecentPlaces`:  `array`
-* `NSPreferredWebServices`:  `dictionary`
-* `NSUserDictionaryReplacementItems`:  `array`
-
-### `systemPreferences.setUserDefault(key, type, value)` _macOS_
+### `systemPreferences.getUserDefault(key, type)` *macOS*
 
 * `key` String
-* `type` String - 详见 [`getUserDefault`][#systempreferencesgetuserdefaultkey-type-macos]
+* `type` String - Can be `string`, `boolean`, `integer`, `float`, `double`, `url`, `array`, `dictionary`
+
+Returns `any` - The value of `key` in system preferences.
+
+This API uses `NSUserDefaults` on macOS. Some popular `key` and `type`s are:
+
+* `AppleInterfaceStyle`: `string`
+* `AppleAquaColorVariant`: `integer`
+* `AppleHighlightColor`: `string`
+* `AppleShowScrollBars`: `string`
+* `NSNavRecentPlaces`: `array`
+* `NSPreferredWebServices`: `dictionary`
+* `NSUserDictionaryReplacementItems`: `array`
+
+### `systemPreferences.setUserDefault(key, type, value)` *macOS*
+
+* `key` String
+* `type` String - See [`getUserDefault`][#systempreferencesgetuserdefaultkey-type-macos]
 * `value` String
 
-设置系统偏好中相应的 `key` 的值。
+Set the value of `key` in system preferences.
 
-需要注意的是 `type` 需要与实际的类型的 `value` 对应。不然会抛出一个异常。
+Note that `type` should match actual type of `value`. An exception is thrown if they don't.
 
-这个 API 在 macOS 系统中使用的是 `NSUserDefaults` 。以下是一些热门的 `key` 和 `type`：
+This API uses `NSUserDefaults` on macOS. Some popular `key` and `type`s are:
 
-* `ApplePressAndHoldEnabled`:  `boolean`
+* `ApplePressAndHoldEnabled`: `boolean`
 
-### `systemPreferences.isAeroGlassEnabled()` _Windows_
+### `systemPreferences.isAeroGlassEnabled()` *Windows*
 
-如果 [DWM composition][dwm-composition] （毛玻璃效果）开启则会返回 `true` 否则返回 `false` 。
+Returns `Boolean` - `true` if [DWM composition](https://msdn.microsoft.com/en-us/library/windows/desktop/aa969540.aspx) (Aero Glass) is enabled, and `false` otherwise.
 
-以下是一个实例去使用它来确定是否应该创建一个透明的窗口（透明的窗口在 DWM composition 禁止的情况下无法正确运行）：
+An example of using it to determine if you should create a transparent window or not (transparent windows won't work correctly when DWM composition is disabled):
 
 ```javascript
 const {BrowserWindow, systemPreferences} = require('electron')
 let browserOptions = {width: 1000, height: 800}
 
-// 如果平台支持的话便新建一个透明的窗口。
+// Make the window transparent only if the platform supports it.
 if (process.platform !== 'win32' || systemPreferences.isAeroGlassEnabled()) {
   browserOptions.transparent = true
   browserOptions.frame = false
 }
 
-// 创建窗口。
+// Create the window.
 let win = new BrowserWindow(browserOptions)
 
-// 区分环境进行加载。
+// Navigate.
 if (browserOptions.transparent) {
   win.loadURL(`file://${__dirname}/index.html`)
 } else {
@@ -157,11 +155,9 @@ if (browserOptions.transparent) {
 }
 ```
 
-[dwm-composition]:https://msdn.microsoft.com/en-us/library/windows/desktop/aa969540.aspx
+### `systemPreferences.getAccentColor()` *Windows*
 
-### `systemPreferences.getAccentColor()` _Windows_
-
-返回 `String` - 用户当前系统颜色偏好的16进制 RGBA 色值。
+Returns `String` - The users current system wide accent color preference in RGBA hexadecimal form.
 
 ```js
 const color = systemPreferences.getAccentColor() // `"aabbccdd"`
@@ -171,45 +167,42 @@ const blue = color.substr(4, 2) // "cc"
 const alpha = color.substr(6, 2) // "dd"
 ```
 
-### `systemPreferences.getColor(color)` _Windows_
+### `systemPreferences.getColor(color)` *Windows*
 
-* `color` String - 接下来的一个值：
-  * `3d-dark-shadow` - 3D 元素的暗部的色值。
-  * `3d-face` - 3D 肤色，以及对话框背景。
-  * `3d-highlight` - 高亮的3D元素。
-  * `3d-light` - 3D 元素亮部。
-  * `3d-shadow` - 3D 元素的阴影。
-  * `active-border` - 活跃窗口边框。
-  * `active-caption` - 活跃窗口标题。 具体来说是指开启渐变效果下活跃窗口中左侧色彩梯度。
-  * `active-caption-gradient` - 活跃窗口标题栏中右侧颜色梯度。
-  * `app-workspace` - 多文档（MDI）应用界面背景颜色。
-  * `button-text` - 推送按钮的文本。
-  * `caption-text` - 标题栏，尺寸框，滚动条尖头框上的文本。
-  * `desktop` - 桌面背景颜色。
-  * `disabled-text` - 灰色（禁止的）文本。
-  * `highlight` - 元素的元素。
-  * `highlight-text` - 选中的文本。
-  * `hotlight` - 热链或者超链接的色值。
-  * `inactive-border` - 不活跃窗口的边框。
-  * `inactive-caption` - 不活跃窗口标题。具体来说是指开启渐变效果下不活跃窗口中左侧色彩梯度。
-  * `inactive-caption-gradient` - 不活跃窗口标题栏中右侧色彩梯度。
-  * `inactive-caption-text` - 不活跃的标题文本。
-  * `info-background` - 工具栏背景。
-  * `info-text` - 工具栏文本。
-  * `menu` - 菜单背景。
-  * `menu-highlight` - 当菜单作为平面菜单时高亮的菜单颜色。
-  * `menubar` - 当菜单作为平面菜单时菜单栏背景。
-  * `menu-text` - 菜单文本。
-  * `scrollbar` - 滚动条灰色区域。
-  * `window` - 窗口背景。
-  * `window-frame` - 窗口框架。
-  * `window-text` - 窗口内文本。
+* `color` String - One of the following values: 
+  * `3d-dark-shadow` - Dark shadow for three-dimensional display elements.
+  * `3d-face` - Face color for three-dimensional display elements and for dialog box backgrounds.
+  * `3d-highlight` - Highlight color for three-dimensional display elements.
+  * `3d-light` - Light color for three-dimensional display elements.
+  * `3d-shadow` - Shadow color for three-dimensional display elements.
+  * `active-border` - Active window border.
+  * `active-caption` - Active window title bar. Specifies the left side color in the color gradient of an active window's title bar if the gradient effect is enabled.
+  * `active-caption-gradient` - Right side color in the color gradient of an active window's title bar.
+  * `app-workspace` - Background color of multiple document interface (MDI) applications.
+  * `button-text` - Text on push buttons.
+  * `caption-text` - Text in caption, size box, and scroll bar arrow box.
+  * `desktop` - Desktop background color.
+  * `disabled-text` - Grayed (disabled) text.
+  * `highlight` - Item(s) selected in a control.
+  * `highlight-text` - Text of item(s) selected in a control.
+  * `hotlight` - Color for a hyperlink or hot-tracked item.
+  * `inactive-border` - Inactive window border.
+  * `inactive-caption` - Inactive window caption. Specifies the left side color in the color gradient of an inactive window's title bar if the gradient effect is enabled.
+  * `inactive-caption-gradient` - Right side color in the color gradient of an inactive window's title bar.
+  * `inactive-caption-text` - Color of text in an inactive caption.
+  * `info-background` - Background color for tooltip controls.
+  * `info-text` - Text color for tooltip controls.
+  * `menu` - Menu background.
+  * `menu-highlight` - The color used to highlight menu items when the menu appears as a flat menu.
+  * `menubar` - The background color for the menu bar when menus appear as flat menus.
+  * `menu-text` - Text in menus.
+  * `scrollbar` - Scroll bar gray area.
+  * `window` - Window background.
+  * `window-frame` - Window frame.
+  * `window-text` - Text in windows.
 
-返回 `String` - 系统设置色值的16进制形式（`#ABCDEF`）。
-详见 [Windows docs][windows-colors] 获取更多细节。
+Returns `String` - The system color setting in RGB hexadecimal form (`#ABCDEF`). See the [Windows docs](https://msdn.microsoft.com/en-us/library/windows/desktop/ms724371(v=vs.85).aspx) for more details.
 
-### `systemPreferences.isInvertedColorScheme()` _Windows_
+### `systemPreferences.isInvertedColorScheme()` *Windows*
 
-返回 `Boolean` - 如果一个反色的配色方案正在被使用，比如一个高对比度的主题，则返回 `true` ，否则返回 `false` 。
-
-[windows-colors]:https://msdn.microsoft.com/en-us/library/windows/desktop/ms724371(v=vs.85).aspx
+Returns `Boolean` - `true` if an inverted color scheme, such as a high contrast theme, is active, `false` otherwise.

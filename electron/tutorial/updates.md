@@ -1,32 +1,31 @@
-# 更新程序体
+# 更新应用程序
 
-这里有很多种方法更新一个Electron程序。最简单的官方支持的方式，就是利用内置的 [Squirrel](https://github.com/Squirrel) 框架和Electron的[自动更新](../api/auto-updater.md)模块。
+有几种方法可以更新Electron应用。 The easiest and officially supported one is taking advantage of the built-in [Squirrel](https://github.com/Squirrel) framework and Electron's [autoUpdater](../api/auto-updater.md) module.
 
-## 部署一台更新服务器
+## Deploying an update server
 
-作为一个好的开端，您首先需要部署一台服务器，用于[自动更新](../api/auto-updater.md)模块将要下载模块的有力支持。
+To get started, you first need to deploy a server that the [autoUpdater](../api/auto-updater.md) module will download new updates from.
 
-根据实际需求，您可能有如下选择：
+Depending on your needs, you can choose from one of these:
 
-- [Hazel](https://github.com/zeit/hazel) ，一款简单的开源的APP，您可以在这里拉取到对应源码[GitHub Releases](https://help.github.com/articles/creating-releases/) 
-。现在还可以在这里 [免费部署](https://zeit.co/now)。
-- [Nuts](https://github.com/GitbookIO/nuts) ，您也可以从
-[GitHub Releases](https://help.github.com/articles/creating-releases/)里面找到对应源码，主要特色是：可以把APP的更新缓存到硬盘上，同时支持私人仓库。
-- [electron-release-server](https://github.com/ArekSredzki/electron-release-server) ，提供一个处理发型版本的面板。
+- [Hazel](https://github.com/zeit/hazel) – Simple update server for open-source apps. Pulls from [GitHub Releases](https://help.github.com/articles/creating-releases/) and can be deployed for free on [Now](https://zeit.co/now).
+- [Nuts](https://github.com/GitbookIO/nuts) – Also uses [GitHub Releases](https://help.github.com/articles/creating-releases/), but caches app updates on disk and supports private repositories.
+- [electron-release-server](https://github.com/ArekSredzki/electron-release-server) – Provides a dashboard for handling releases
+- [Nucleus](https://github.com/atlassian/nucleus) - A complete update server for Electron apps maintained by Atlassian. Supports multiple applications and channels; uses a static file store to minify server cost.
 
-如果您的app是用 [electron-builder][electron-builder-lib] 打包的话，那么您可以使用[electron-updater] 模块，它不需要提供更新专用服务器，支持从 S3 、Github 或者其它静态文件服务器获得更新。
+If your app is packaged with [electron-builder](https://github.com/electron-userland/electron-builder) you can use the [electron-updater](https://www.electron.build/auto-update) module, which does not require a server and allows for updates from S3, GitHub or any other static file host.
 
-## 在您的APP之中实现更新
+## Implementing updates in your app
 
-一旦您部署了您的更新服务器，接下来要做的就是，在您的 APP 中引入必要的模块了。接下来的代码，对于不同的服务器软件，可能会有所不同。但是工作原理，都是和使用使用[Hazel](https://github.com/zeit/hazel)是一样的。
+Once you've deployed your update server, continue with importing the required modules in your code. The following code might vary for different server software, but it works like described when using [Hazel](https://github.com/zeit/hazel).
 
-**重要提示:** 请确保下面的程序是运行在您的打包app上面的，而不是开发环境。您可以使用[electron-is-dev](https://github.com/sindresorhus/electron-is-dev) 用于检测是否是开发环境。
+**Important:** Please ensure that the code below will only be executed in your packaged app, and not in development. You can use [electron-is-dev](https://github.com/sindresorhus/electron-is-dev) to check for the environment.
 
 ```js
 const {app, autoUpdater, dialog} = require('electron')
 ```
 
-接下来，我们需要组装一个服务器更新的链接URL，然后把这个信息通知给[自动更新](../api/auto-updater.md) 模块:
+Next, construct the URL of the update server and tell [autoUpdater](../api/auto-updater.md) about it:
 
 ```js
 const server = 'https://your-deployment-url.com'
@@ -35,7 +34,7 @@ const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 autoUpdater.setFeedURL(feed)
 ```
 
-作为最后一部，请检查更新。下面的范例代码，将会每分钟就执行一次，是否更新检查。
+As the final step, check for updates. The example below will check every minute:
 
 ```js
 setInterval(() => {
@@ -43,11 +42,11 @@ setInterval(() => {
 }, 60000)
 ```
 
-一旦您的程序体被 [封装](../tutorial/application-distribution.md) 好之后, 它将会收到您发布的每条 [Github发行版](https://help.github.com/articles/creating-releases/) 更新通知。
+Once your application is [packaged](../tutorial/application-distribution.md), it will receive an update for each new [GitHub Release](https://help.github.com/articles/creating-releases/) that you publish.
 
-## 应用更新
+## Applying updates
 
-现在，您已经为您的程序配置好了基本的更新机制，当有更新发布的时候，您需要确保每个用户都会收到提示信息。这一点将使用 自动更新API [events](../api/auto-updater.md#events) 来达成目的：
+Now that you've configured the basic update mechanism for your application, you need to ensure that the user will get notified when there's an update. This can be achieved using the autoUpdater API [events](../api/auto-updater.md#events):
 
 ```js
 autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
@@ -65,7 +64,7 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
 })
 ```
 
-同时需要确保错误信息[被处理](../api/auto-updater.md#event-error)。这里有个范例用于把这些错误信息记录到 `标准错误输出（stderr）`之中：
+Also make sure that errors are [being handled](../api/auto-updater.md#event-error). Here's an example for logging them to `stderr`:
 
 ```js
 autoUpdater.on('error', message => {
@@ -73,6 +72,3 @@ autoUpdater.on('error', message => {
   console.error(message)
 })
 ```
-
-[electron-builder-lib]: https://github.com/electron-userland/electron-builder
-[electron-updater]: https://www.electron.build/auto-update
